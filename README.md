@@ -1,3 +1,3 @@
 #ToyDNS
 
-The purpose of this project is to create a toy DNS resolver and client, for learning purposes.
+The purpose of this project is to create a toy DNS server, for learning purposes.
