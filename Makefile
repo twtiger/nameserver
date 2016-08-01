@@ -11,4 +11,4 @@ deps:
 	go get gopkg.in/check.v1
 	go get golang.org/x/tools/cmd/cover
 
-ci: deps lint test
+ci: lint test
