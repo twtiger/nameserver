@@ -5,7 +5,7 @@ import (
 	"net"
 )
 
-func handleConnection(net.Conn) bool {
+func HandleConnection(net.Conn) bool {
 	fmt.Printf("in connection")
 	return true
 }

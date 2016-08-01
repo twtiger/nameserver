@@ -13,6 +13,6 @@ type RequestHandlerSuite struct{}
 var _ = Suite(&RequestHandlerSuite{})
 
 func (s *RequestHandlerSuite) TestHelloWorld(c *C) {
-	output := handleConnection(new(mockConn))
+	output := HandleConnection(new(mockConn))
 	c.Assert(true, Equals, output)
 }
