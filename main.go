@@ -6,7 +6,7 @@ import (
 )
 
 func main() {
-	ln, err := net.Listen("udp", ":8080")
+	ln, err := net.Listen("udp", ":53")
 	if err != nil {
 		// handle error
 	}
