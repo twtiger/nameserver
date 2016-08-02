@@ -12,7 +12,7 @@ type RequestHandlerSuite struct{}
 
 var _ = Suite(&RequestHandlerSuite{})
 
-func (s *RequestHandlerSuite) TestHelloWorld(c *C) {
+func (s *RequestHandlerSuite) TestHandlesConnection(c *C) {
 	output := HandleConnection(new(mockConn))
 	c.Assert(true, Equals, output)
 }
