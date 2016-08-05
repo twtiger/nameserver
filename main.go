@@ -6,15 +6,17 @@ import (
 )
 
 func main() {
-	ln, err := net.Listen("udp", ":53")
-	if err != nil {
-		// handle error
+
+	udpAddr := &net.UDPAddr{
+		IP:   net.ParseIP("127.0.0.1"),
+		Port: 53,
 	}
+
 	for {
-		conn, err := ln.Accept()
+		udpConn, err := net.ListenUDP("udp", udpAddr)
 		if err != nil {
 			// handle error
 		}
-		go reqhandler.HandleConnection(conn)
+		go reqhandler.HandleUDPConnection(udpConn)
 	}
 }
