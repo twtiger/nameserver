@@ -1,0 +1,1 @@
+^reqhandler/(request_handler)\.go:[[:digit:]]+:[[:digit:]]+: exported function .* should have comment or be unexported
