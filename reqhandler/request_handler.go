@@ -4,6 +4,6 @@ import (
 	"net"
 )
 
-func HandleConnection(net.Conn) bool {
+func HandleUDPConnection(udpConn net.Conn) bool {
 	return true
 }
