@@ -1,12 +1,17 @@
 package reqhandler
 
 import (
+	"fmt"
+	"log"
 	"net"
 )
 
-func HandleUDPConnection(udpConn net.PacketConn) {
-	_, _ = readRequest(udpConn)
-
+func HandleUDPConnection(udpConn net.PacketConn, l *log.Logger) {
+	_, err := readRequest(udpConn)
+	if err != nil {
+		errMsg := fmt.Errorf("Unable to read udp connection")
+		l.Println(errMsg)
+	}
 }
 
 func readRequest(udpConn net.PacketConn) ([]byte, error) {
