@@ -6,11 +6,11 @@ import (
 	"net"
 )
 
-func HandleUDPConnection(udpConn net.PacketConn, l *log.Logger) {
+func HandleUDPConnection(udpConn net.PacketConn) {
 	_, err := readRequest(udpConn)
 	if err != nil {
-		errMsg := fmt.Errorf("Unable to read udp connection")
-		l.Println(errMsg)
+		errMsg := fmt.Sprintf("Unable to read udp connection")
+		log.Printf(errMsg)
 	}
 }
 
