@@ -1,4 +1,4 @@
-package dnsserv
+package main
 
 import (
 	"github.com/twtiger/toy-dns-nameserver/reqhandler"
@@ -12,7 +12,7 @@ func getUDPAddr() *net.UDPAddr {
 	}
 }
 
-func start() error {
+func run() error {
 	for {
 		udpConn, err := net.ListenUDP("udp", getUDPAddr())
 		if err != nil {

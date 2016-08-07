@@ -1,4 +1,4 @@
-package dnsserv
+package main
 
 import (
 	"fmt"
@@ -14,7 +14,7 @@ func initLogger() {
 func main() {
 	initLogger()
 
-	err := start()
+	err := run()
 	if err != nil {
 		errMsg := fmt.Sprintf("Error in starting dns nameserver")
 		log.Printf(errMsg)
