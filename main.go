@@ -16,7 +16,7 @@ func main() {
 
 	err := run()
 	if err != nil {
-		errMsg := fmt.Sprintf("Error in starting dns nameserver")
+		errMsg := fmt.Sprintf("Error in starting dns nameserver: %s", err.Error())
 		log.Printf(errMsg)
 	}
 }
