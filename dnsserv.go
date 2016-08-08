@@ -19,5 +19,6 @@ func run() error {
 			return err
 		}
 		go reqhandler.HandleUDPConnection(udpConn)
+		udpConn.Close()
 	}
 }
