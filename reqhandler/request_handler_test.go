@@ -18,7 +18,7 @@ func (s *RequestHandlerSuite) TestDataFromUDPConnection(c *C) {
 	output, err := readRequest(m)
 
 	c.Assert(err, IsNil)
-	c.Assert(true, Equals, bytes.Equal(udpPacket, output[:len(udpPacket)]))
+	c.Assert(bytes.Equal(udpPacket, output[:len(udpPacket)]), Equals, true)
 }
 
 func (s *RequestHandlerSuite) TestDataReadUDPConnectionHasUDPPacketSize(c *C) {
@@ -26,5 +26,5 @@ func (s *RequestHandlerSuite) TestDataReadUDPConnectionHasUDPPacketSize(c *C) {
 	output, err := readRequest(m)
 
 	c.Assert(err, IsNil)
-	c.Assert(512, Equals, len(output))
+	c.Assert(len(output), Equals, 512)
 }

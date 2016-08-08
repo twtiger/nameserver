@@ -17,6 +17,6 @@ func (s *DNSNameserverSuite) TestUDPConnection(c *C) {
 	host, port, err := net.SplitHostPort(output.String())
 
 	c.Assert(err, IsNil)
-	c.Assert("127.0.0.1", Equals, host)
-	c.Assert("53", Equals, port)
+	c.Assert(host, Equals, "127.0.0.1")
+	c.Assert(port, Equals, "53")
 }
