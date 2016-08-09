@@ -10,26 +10,35 @@ import (
 func getUDPAddr() *net.UDPAddr {
 	return &net.UDPAddr{
 		IP:   net.ParseIP("127.0.0.1"),
-		Port: 53,
+		Port: 8888,
 	}
 }
 
-// HandleUDPConnection takes a udp connection, handles any errors, and should return a request
-func handleUDPConnection(udpConn net.PacketConn) {
-	_, err := requests.ReadUDP(udpConn)
+func readUDPPacket(udpConn net.PacketConn) ([]byte, error) {
+	b := make([]byte, requests.DNSMsgLength)
+	_, _, err := udpConn.ReadFrom(b)
 	if err != nil {
-		errMsg := fmt.Sprintf("Unable to read udp connection, error: %s", err.Error())
-		log.Printf(errMsg)
+		e := fmt.Sprintf("Error in reading message %s", err.Error())
+		log.Printf(e)
 	}
+	return b, err
+}
+
+func handleRequest(p []byte) {
+	// TODO
 }
 
 func run() error {
+	udpConn, err := net.ListenUDP("udp", getUDPAddr())
+
+	if err != nil {
+		return err
+	}
+
 	for {
-		udpConn, err := net.ListenUDP("udp", getUDPAddr())
-		if err != nil {
-			return err
+		b, e := readUDPPacket(udpConn)
+		if e != nil {
+			go handleRequest(b)
 		}
-		go handleUDPConnection(udpConn)
-		udpConn.Close()
 	}
 }

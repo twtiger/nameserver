@@ -1,22 +1,10 @@
 package requests
 
-import (
-	"net"
-)
-
 // DNSMsgLength is the entire DNS message in bytes
 const DNSMsgLength = 512
 
 // DNSHeaderLength is the DNS header length in bytes
 const DNSHeaderLength = 12
-
-// ReadUDP takes a udp connection
-// Should eventually return a request object
-func ReadUDP(udpConn net.PacketConn) ([]byte, error) {
-	b := make([]byte, DNSMsgLength)
-	_, _, err := udpConn.ReadFrom(b)
-	return b, err
-}
 
 func extractID(d []byte) uint16 {
 	return (uint16(d[0]) << 8) | uint16(d[1])

@@ -1,7 +1,6 @@
 package requests
 
 import (
-	"bytes"
 	"encoding/binary"
 	. "gopkg.in/check.v1"
 	"testing"
@@ -12,23 +11,6 @@ func Test(t *testing.T) { TestingT(t) }
 type RequestsSuite struct{}
 
 var _ = Suite(&RequestsSuite{})
-
-func (s *RequestsSuite) TestDataFromUDPConnection(c *C) {
-	udpPacket := []byte("TEST_CONNECTION")
-	m := &mockUDPConn{data: udpPacket}
-	output, err := ReadUDP(m)
-
-	c.Assert(err, IsNil)
-	c.Assert(bytes.Equal(udpPacket, output[:len(udpPacket)]), Equals, true)
-}
-
-func (s *RequestsSuite) TestDataReadUDPConnectionHasUDPPacketSize(c *C) {
-	m := &mockUDPConn{}
-	output, err := ReadUDP(m)
-
-	c.Assert(err, IsNil)
-	c.Assert(output, HasLen, 512)
-}
 
 func getTestHeaders() map[FieldName][]byte {
 	return map[FieldName][]byte{
