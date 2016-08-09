@@ -16,7 +16,7 @@ var _ = Suite(&RequestsSuite{})
 func (s *RequestsSuite) TestDataFromUDPConnection(c *C) {
 	udpPacket := []byte("TEST_CONNECTION")
 	m := &mockUDPConn{data: udpPacket}
-	output, err := readRequest(m)
+	output, err := ReadUDP(m)
 
 	c.Assert(err, IsNil)
 	c.Assert(bytes.Equal(udpPacket, output[:len(udpPacket)]), Equals, true)
@@ -24,7 +24,7 @@ func (s *RequestsSuite) TestDataFromUDPConnection(c *C) {
 
 func (s *RequestsSuite) TestDataReadUDPConnectionHasUDPPacketSize(c *C) {
 	m := &mockUDPConn{}
-	output, err := readRequest(m)
+	output, err := ReadUDP(m)
 
 	c.Assert(err, IsNil)
 	c.Assert(len(output), Equals, 512)
