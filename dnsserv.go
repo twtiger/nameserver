@@ -2,10 +2,11 @@ package main
 
 import (
 	"fmt"
-	"github.com/twtiger/toy-dns-nameserver/requests"
 	"log"
 	"net"
 )
+
+const dnsMsgLength = 512
 
 func getUDPAddr() *net.UDPAddr {
 	return &net.UDPAddr{
@@ -15,7 +16,7 @@ func getUDPAddr() *net.UDPAddr {
 }
 
 func readUDPPacket(udpConn net.PacketConn) ([]byte, error) {
-	b := make([]byte, requests.DNSMsgLength)
+	b := make([]byte, dnsMsgLength)
 	_, _, err := udpConn.ReadFrom(b)
 	if err != nil {
 		e := fmt.Sprintf("Error in reading message %s", err.Error())

@@ -1,8 +1,5 @@
 package requests
 
-// DNSMsgLength is the entire DNS message in bytes
-const DNSMsgLength = 512
-
 // DNSHeaderLength is the DNS header length in bytes
 const DNSHeaderLength = 12
 
