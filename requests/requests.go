@@ -32,7 +32,8 @@ func extractID(d []byte) uint16 {
 }
 
 func extractQuery(d []byte) uint16 {
-	return uint16(d[3]) << (8 - HeaderFieldLengths[QR])
+	b := uint16(d[2]) & uint16(1<<7)
+	return b >> 7
 }
 
 // TODO finish all header fields

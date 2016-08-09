@@ -53,7 +53,8 @@ func buildTestHeaders() ([]byte, map[FieldName][]byte) {
 	data := make([]byte, 12)
 	data[0] = h[ID][0]
 	data[1] = h[ID][1]
-	data[2] = byte(uint(h[QR][1]) << (8 - HeaderFieldLengths[QR]))
+	data[2] = byte(uint16(h[QR][1]) << uint16(7))
+	data[2] = byte(uint16(h[QR][1]) << uint16(7))
 	return data, h
 }
 
@@ -66,7 +67,6 @@ func (s *RequestsSuite) TestReadIDFromUDPHeaders(c *C) {
 }
 
 func (s *RequestsSuite) TestReadQueryFromUDPHeaders(c *C) {
-	c.Skip("come back and fix")
 	udpHeaders, headers := buildTestHeaders()
 	output := extractHeaders(udpHeaders)
 
