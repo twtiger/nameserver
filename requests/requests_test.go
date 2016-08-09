@@ -27,7 +27,7 @@ func (s *RequestsSuite) TestDataReadUDPConnectionHasUDPPacketSize(c *C) {
 	output, err := ReadUDP(m)
 
 	c.Assert(err, IsNil)
-	c.Assert(len(output), Equals, 512)
+	c.Assert(output, HasLen, 512)
 }
 
 func getTestHeaders() map[FieldName][]byte {
