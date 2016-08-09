@@ -32,29 +32,30 @@ func extractID(d []byte) uint16 {
 }
 
 func extractQuery(d []byte) uint16 {
-	return uint16(d[3]) << (8 - HeaderFieldLengths[QUERY])
+	return uint16(d[3]) << (8 - HeaderFieldLengths[QR])
 }
 
 // TODO finish all header fields
 func extractHeaders(d []byte) Headers {
 	headers := Headers{}
 	headers.ID = extractID(d)
-	headers.Query = extractQuery(d)
+	headers.QR = extractQuery(d)
 	return headers
 }
 
 // Headers for DNS
 type Headers struct {
-	ID       uint16
-	Query    uint16
-	Opcode   uint16
-	AA       uint16
-	Trunc    uint16
-	RDesc    uint16
-	RAvail   uint16
-	RespCode uint16
-	QdCount  uint16
-	AnCount  uint16
-	NsCount  uint16
-	ArCount  uint16
+	ID      uint16
+	QR      uint16
+	OPCODE  uint16
+	AA      uint16
+	TR      uint16
+	RD      uint16
+	RA      uint16
+	Z       uint16
+	RCODE   uint16
+	QDCOUNT uint16
+	ANCOUNT uint16
+	NSCOUNT uint16
+	ARCOUNT uint16
 }
