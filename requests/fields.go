@@ -3,7 +3,7 @@ package requests
 // FieldName represents DNS message fields
 type FieldName int
 
-// Names for fields
+// Names for DNS fields
 const (
 	ID FieldName = iota
 	QR
