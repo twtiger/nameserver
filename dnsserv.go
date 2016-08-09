@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/twtiger/toy-dns-nameserver/reqhandler"
+	"github.com/twtiger/toy-dns-nameserver/requests"
 	"net"
 )
 
@@ -18,7 +18,7 @@ func run() error {
 		if err != nil {
 			return err
 		}
-		go reqhandler.HandleUDPConnection(udpConn)
+		go requests.HandleUDPConnection(udpConn)
 		udpConn.Close()
 	}
 }

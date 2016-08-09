@@ -1,4 +1,4 @@
-package reqhandler
+package requests
 
 import (
 	"bytes"
@@ -9,11 +9,11 @@ import (
 
 func Test(t *testing.T) { TestingT(t) }
 
-type RequestHandlerSuite struct{}
+type RequestsSuite struct{}
 
-var _ = Suite(&RequestHandlerSuite{})
+var _ = Suite(&RequestsSuite{})
 
-func (s *RequestHandlerSuite) TestDataFromUDPConnection(c *C) {
+func (s *RequestsSuite) TestDataFromUDPConnection(c *C) {
 	udpPacket := []byte("TEST_CONNECTION")
 	m := &mockUDPConn{data: udpPacket}
 	output, err := readRequest(m)
@@ -22,7 +22,7 @@ func (s *RequestHandlerSuite) TestDataFromUDPConnection(c *C) {
 	c.Assert(bytes.Equal(udpPacket, output[:len(udpPacket)]), Equals, true)
 }
 
-func (s *RequestHandlerSuite) TestDataReadUDPConnectionHasUDPPacketSize(c *C) {
+func (s *RequestsSuite) TestDataReadUDPConnectionHasUDPPacketSize(c *C) {
 	m := &mockUDPConn{}
 	output, err := readRequest(m)
 
@@ -57,7 +57,7 @@ func buildTestHeaders() ([]byte, map[FieldName][]byte) {
 	return data, h
 }
 
-func (s *RequestHandlerSuite) TestReadIDFromUDPHeaders(c *C) {
+func (s *RequestsSuite) TestReadIDFromUDPHeaders(c *C) {
 	udpHeaders, headers := buildTestHeaders()
 	output := extractHeaders(udpHeaders)
 
@@ -65,7 +65,7 @@ func (s *RequestHandlerSuite) TestReadIDFromUDPHeaders(c *C) {
 	c.Assert(output.ID, Equals, expected)
 }
 
-func (s *RequestHandlerSuite) TestReadQueryFromUDPHeaders(c *C) {
+func (s *RequestsSuite) TestReadQueryFromUDPHeaders(c *C) {
 	udpHeaders, headers := buildTestHeaders()
 	output := extractHeaders(udpHeaders)
 
