@@ -6,9 +6,13 @@ import (
 	"net"
 )
 
-const DNSMsgLength = 512   // in bytes
-const DNSHeaderLength = 12 // in bytes
+// DNSMsgLength is the entire DNS message in bytes
+const DNSMsgLength = 512
 
+// DNSHeaderLength is the DNS header length in bytes
+const DNSHeaderLength = 12
+
+// HandleUDPConnection takes a udp connection, handles any errors, and should return a request
 func HandleUDPConnection(udpConn net.PacketConn) {
 	_, err := readRequest(udpConn)
 	if err != nil {
@@ -39,6 +43,7 @@ func extractHeaders(d []byte) Headers {
 	return headers
 }
 
+// Headers for DNS
 type Headers struct {
 	ID       uint16
 	Query    uint16

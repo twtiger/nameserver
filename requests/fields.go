@@ -1,7 +1,9 @@
 package requests
 
+// FieldName represents DNS message fields
 type FieldName string
 
+// Names for fields
 const (
 	ID       FieldName = "id"
 	QUERY              = "query"
@@ -17,6 +19,7 @@ const (
 	ARCOUNT            = "arcount"
 )
 
+// HeaderFieldLengths maps DNS fields with their respective lengths
 var HeaderFieldLengths = map[FieldName]uint{
 	ID:       16,
 	QUERY:    1,
