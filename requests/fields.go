@@ -1,23 +1,23 @@
 package requests
 
 // FieldName represents DNS message fields
-type FieldName string
+type FieldName int
 
 // Names for fields
 const (
-	ID      FieldName = "id"
-	QR                = "query"
-	OPCODE            = "opcode"
-	AA                = "authans"
-	TC                = "trunc"
-	RD                = "rdesc"
-	RA                = "ravail"
-	Z                 = "reserved"
-	RCODE             = "respcode"
-	QDCOUNT           = "qdcount"
-	ANCOUNT           = "ancount"
-	NSCOUNT           = "nscount"
-	ARCOUNT           = "arcount"
+	ID FieldName = iota
+	QR
+	OPCODE
+	AA
+	TC
+	RD
+	RA
+	Z
+	RCODE
+	QDCOUNT
+	ANCOUNT
+	NSCOUNT
+	ARCOUNT
 )
 
 // HeaderFieldLengths maps DNS fields with their respective lengths
