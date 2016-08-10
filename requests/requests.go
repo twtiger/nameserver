@@ -7,34 +7,35 @@ func ParseRequest(b []byte) {
 	// TODO
 }
 
-func extractID(d []byte) uint16 {
-	return (uint16(d[0]) << 8) | uint16(d[1])
+// TODO make for variable number of bytes
+func extractTwoBytes(d []byte, f Field) uint16 {
+	return (uint16(d[f.position]) << 8) | uint16(d[f.position+1])
 }
 
-func extractQuery(d []byte) uint16 {
-	queryMask := uint16(1 << 7)
-	b := uint16(d[2]) & queryMask
-	return b >> 7
+func extractBit(d []byte, f Field) uint16 {
+	pos := 7 - f.offset
+	mask := uint16(1 << pos)
+	b := uint16(d[f.position]) & mask
+	return b >> pos
 }
 
-func extractOpcode(d []byte) uint16 {
-	opcodeMask := uint16(1<<4) | uint16(1<<3)
-	b := uint16(d[2]) & opcodeMask
-	return b >> 3
-}
-
-func extractAA(d []byte) uint16 {
-	aaMask := uint16(1 << 2)
-	b := uint16(d[2]) & aaMask
-	return b >> 2
+// This maybe could be combined with extractBit
+func extractMultipleBits(d []byte, f Field) uint16 {
+	b := uint16(0)
+	pos := 7 - f.offset - f.length
+	for n := f.length; n > 0; n-- {
+		mask := uint16(1 << n)
+		b = b | uint16(d[f.position])&mask
+	}
+	return b >> pos
 }
 
 func extractHeaders(d []byte) Headers {
 	headers := Headers{}
-	headers.ID = extractID(d)
-	headers.QR = extractQuery(d)
-	headers.OPCODE = extractOpcode(d)
-	headers.AA = extractAA(d)
+	headers.ID = extractTwoBytes(d, HeaderFields[ID])
+	headers.QR = extractBit(d, HeaderFields[QR])
+	headers.OPCODE = extractMultipleBits(d, HeaderFields[OPCODE])
+	headers.AA = extractBit(d, HeaderFields[AA])
 	return headers
 }
 

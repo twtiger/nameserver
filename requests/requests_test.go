@@ -1,7 +1,6 @@
 package requests
 
 import (
-	"encoding/binary"
 	. "gopkg.in/check.v1"
 	"testing"
 )
@@ -36,29 +35,33 @@ func buildTestHeaders() ([]byte, map[FieldName][]byte) {
 	data[0] = h[ID][0]
 	data[1] = h[ID][1]
 	data[2] = byte(uint16(h[QR][1]) << uint16(7))
-	data[2] = byte(uint16(h[QR][1]) << uint16(7))
 	return data, h
 }
 
 func (s *RequestsSuite) TestReadIDFromUDPHeaders(c *C) {
-	udpHeaders, headers := buildTestHeaders()
-	output := extractHeaders(udpHeaders)
+	data := make([]byte, 12)
+	field := HeaderFields[ID]
+	data[field.position+1] = byte(uint16(1) << uint16(field.offset))
+	output := extractHeaders(data)
 
-	expected := binary.BigEndian.Uint16(headers[ID])
-	c.Assert(output.ID, Equals, expected)
+	c.Assert(output.ID, Equals, uint16(1))
 }
 
 func (s *RequestsSuite) TestReadQueryFromUDPHeaders(c *C) {
-	udpHeaders, headers := buildTestHeaders()
-	output := extractHeaders(udpHeaders)
+	data := make([]byte, 12)
+	field := HeaderFields[QR]
+	lastBitPos := 7 - field.offset
+	data[field.position] = byte(uint16(1) << uint16(lastBitPos))
+	output := extractHeaders(data)
 
-	expected := binary.BigEndian.Uint16(headers[QR])
-	c.Assert(output.QR, Equals, expected)
+	c.Assert(output.QR, Equals, uint16(1))
 }
 
 func (s *RequestsSuite) TestReadOpcodeFromUDPHeaders(c *C) {
 	data := make([]byte, 12)
-	data[2] = byte(uint16(1) << uint16(3))
+	field := HeaderFields[OPCODE]
+	lastBitPos := 7 - field.offset - field.length
+	data[field.position] = byte(uint16(1) << uint16(lastBitPos))
 	output := extractHeaders(data)
 
 	c.Assert(output.OPCODE, Equals, uint16(1))
@@ -66,7 +69,9 @@ func (s *RequestsSuite) TestReadOpcodeFromUDPHeaders(c *C) {
 
 func (s *RequestsSuite) TestReadAAFromUDPHeaders(c *C) {
 	data := make([]byte, 12)
-	data[2] = byte(uint16(1) << uint16(2))
+	field := HeaderFields[AA]
+	lastBitPos := 7 - field.offset
+	data[field.position] = byte(uint16(1) << uint16(lastBitPos))
 	output := extractHeaders(data)
 
 	c.Assert(output.AA, Equals, uint16(1))
