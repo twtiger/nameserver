@@ -7,11 +7,12 @@ import (
 )
 
 const dnsMsgLength = 512
+const port = 8853
 
 func getUDPAddr() *net.UDPAddr {
 	return &net.UDPAddr{
 		IP:   net.ParseIP("127.0.0.1"),
-		Port: 8888,
+		Port: port,
 	}
 }
 
