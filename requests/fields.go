@@ -20,7 +20,7 @@ const (
 	ARCOUNT
 )
 
-// HeaderFields maps DNS fields with their length, position, and offset
+// HeaderFields maps DNS fields with information specific to that field
 var HeaderFields = map[FieldName]Field{
 	ID:      Field{length: 16, position: 0, offset: 0},
 	QR:      Field{length: 1, position: 2, offset: 0},
@@ -37,6 +37,7 @@ var HeaderFields = map[FieldName]Field{
 	ARCOUNT: Field{length: 16, position: 10, offset: 0},
 }
 
+// Field holds information about the length, position, and offset of a field.
 type Field struct {
 	length   uint
 	position uint

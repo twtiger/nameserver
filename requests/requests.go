@@ -3,6 +3,7 @@ package requests
 // DNSHeaderLength is the DNS header length in bytes
 const DNSHeaderLength = 12
 
+// ParseRequest takes a DNS message and returns a Request object
 func ParseRequest(b []byte) {
 	// TODO
 }
