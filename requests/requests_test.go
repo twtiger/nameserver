@@ -55,3 +55,19 @@ func (s *RequestsSuite) TestReadQueryFromUDPHeaders(c *C) {
 	expected := binary.BigEndian.Uint16(headers[QR])
 	c.Assert(output.QR, Equals, expected)
 }
+
+func (s *RequestsSuite) TestReadOpcodeFromUDPHeaders(c *C) {
+	data := make([]byte, 12)
+	data[2] = byte(uint16(1) << uint16(3))
+	output := extractHeaders(data)
+
+	c.Assert(output.OPCODE, Equals, uint16(1))
+}
+
+func (s *RequestsSuite) TestReadAAFromUDPHeaders(c *C) {
+	data := make([]byte, 12)
+	data[2] = byte(uint16(1) << uint16(2))
+	output := extractHeaders(data)
+
+	c.Assert(output.AA, Equals, uint16(1))
+}

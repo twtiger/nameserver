@@ -3,20 +3,38 @@ package requests
 // DNSHeaderLength is the DNS header length in bytes
 const DNSHeaderLength = 12
 
+func ParseRequest(b []byte) {
+	// TODO
+}
+
 func extractID(d []byte) uint16 {
 	return (uint16(d[0]) << 8) | uint16(d[1])
 }
 
 func extractQuery(d []byte) uint16 {
-	b := uint16(d[2]) & uint16(1<<7)
+	queryMask := uint16(1 << 7)
+	b := uint16(d[2]) & queryMask
 	return b >> 7
 }
 
-// TODO finish all header fields
+func extractOpcode(d []byte) uint16 {
+	opcodeMask := uint16(1<<4) | uint16(1<<3)
+	b := uint16(d[2]) & opcodeMask
+	return b >> 3
+}
+
+func extractAA(d []byte) uint16 {
+	aaMask := uint16(1 << 2)
+	b := uint16(d[2]) & aaMask
+	return b >> 2
+}
+
 func extractHeaders(d []byte) Headers {
 	headers := Headers{}
 	headers.ID = extractID(d)
 	headers.QR = extractQuery(d)
+	headers.OPCODE = extractOpcode(d)
+	headers.AA = extractAA(d)
 	return headers
 }
 
