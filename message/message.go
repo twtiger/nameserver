@@ -50,7 +50,7 @@ type qname struct {
 
 type label struct {
 	len   uint8
-	chars []uint8
+	label string
 }
 
 const a = uint16(1)
@@ -97,7 +97,7 @@ func domainToLabels(domain string) []label {
 	for _, v := range strings.Split(domain, ".") {
 		l := &label{
 			len:   uint8(len(v)),
-			chars: []uint8(v),
+			label: v,
 		}
 		ls = append(ls, *l)
 	}
