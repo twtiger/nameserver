@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"log"
+
+	"github.com/twtiger/toy-dns-nameserver/nameserver"
 )
 
 func initLogger() {
@@ -14,7 +16,7 @@ func initLogger() {
 func main() {
 	initLogger()
 
-	err := run()
+	err := nameserver.Start()
 	if err != nil {
 		errMsg := fmt.Sprintf("Error in starting dns nameserver: %s", err.Error())
 		log.Printf(errMsg)
