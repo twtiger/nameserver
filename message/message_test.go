@@ -17,5 +17,5 @@ func (s *MessageSuite) TestMessageContainsAResourceRecordForAQuery(c *C) {
 
 	response := Response(query)
 
-	c.Assert(response.Answers, DeepEquals, []*Record{&Record{Name: "thoughtworks.com", Type: uint16(1), Class: 1, TTL: 300, RDLength: 0, RData: "161.47.4.2"}})
+	c.Assert(response.Answers, DeepEquals, []*Record{&Record{Name: "thoughtworks.com", Type: 1, Class: 1, TTL: 300, RDLength: 0, RData: "161.47.4.2"}})
 }

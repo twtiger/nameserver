@@ -53,27 +53,27 @@ type label struct {
 	label string
 }
 
-const a = uint16(1)
-const in = uint16(1)
+const a uint16 = 1
+const in uint16 = 1
 
 // Query creates a DNS query based on a given domain string
 func Query(d string) *Message {
 	header := &header{
-		ID:      uint16(1234),
-		QR:      byte(0),
-		OPCODE:  byte(4),
-		AA:      byte(0),
-		TR:      byte(0),
-		RD:      byte(0),
-		RA:      byte(0),
-		Z:       byte(0),
-		AD:      byte(0),
-		CD:      byte(0),
+		ID:      1234,
+		QR:      0,
+		OPCODE:  4,
+		AA:      0,
+		TR:      0,
+		RD:      0,
+		RA:      0,
+		Z:       0,
+		AD:      0,
+		CD:      0,
 		RCODE:   make([]byte, 4),
-		QDCOUNT: uint16(1),
-		ANCOUNT: uint16(0),
-		NSCOUNT: uint16(0),
-		ARCOUNT: uint16(0),
+		QDCOUNT: 1,
+		ANCOUNT: 0,
+		NSCOUNT: 0,
+		ARCOUNT: 0,
 	}
 	return &Message{
 		header: header,
@@ -87,7 +87,7 @@ func Query(d string) *Message {
 func Response(query *Message) *Message {
 	return &Message{
 		Answers: []*Record{
-			&Record{Name: "thoughtworks.com", Type: a, Class: uint16(1), TTL: uint32(300), RDLength: uint16(0), RData: "161.47.4.2"},
+			&Record{Name: "thoughtworks.com", Type: a, Class: 1, TTL: 300, RDLength: 0, RData: "161.47.4.2"},
 		},
 	}
 }
