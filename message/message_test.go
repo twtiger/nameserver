@@ -31,8 +31,8 @@ func (s *MessageSuite) TestResourceRecordTypeAForThoughtworks(c *C) {
 			class: in,
 		},
 	})
-	c.Assert(response.answers, DeepEquals, []*Record{
-		&Record{
+	c.Assert(response.answers, DeepEquals, []*record{
+		&record{
 			Name:     "thoughtworks.com.",
 			Type:     1,
 			Class:    1,

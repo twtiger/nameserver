@@ -6,7 +6,7 @@ import "strings"
 type Message struct {
 	header  *header
 	queries []*query
-	answers []*Record
+	answers []*record
 }
 
 type header struct {
@@ -27,8 +27,7 @@ type header struct {
 	ARCOUNT uint16
 }
 
-// Record represents DNS a Resource Record
-type Record struct {
+type record struct {
 	Name     string
 	Type     uint16
 	Class    uint16
@@ -85,7 +84,7 @@ func Query(d string) *Message {
 
 // Response returns the message with resource records
 func Response(query *Message) *Message {
-	query.answers = append(query.answers, &Record{
+	query.answers = append(query.answers, &record{
 		Name:     "thoughtworks.com.",
 		Type:     a,
 		Class:    1,
