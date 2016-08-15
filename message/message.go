@@ -6,7 +6,7 @@ import "strings"
 type Message struct {
 	header  *header
 	queries []*query
-	Answers []*Record
+	answers []*Record
 }
 
 type header struct {
@@ -85,11 +85,15 @@ func Query(d string) *Message {
 
 // Response returns the message with resource records
 func Response(query *Message) *Message {
-	return &Message{
-		Answers: []*Record{
-			&Record{Name: "thoughtworks.com", Type: a, Class: 1, TTL: 300, RDLength: 0, RData: "161.47.4.2"},
-		},
-	}
+	query.answers = append(query.answers, &Record{
+		Name:     "thoughtworks.com.",
+		Type:     a,
+		Class:    1,
+		TTL:      300,
+		RDLength: 0,
+		RData:    "161.47.4.2",
+	})
+	return query
 }
 
 func domainToLabels(domain string) []label {
