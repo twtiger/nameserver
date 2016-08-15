@@ -78,7 +78,7 @@ func Query(d string) *Message {
 	return &Message{
 		header: header,
 		queries: []*query{
-			&query{name: &qname{labels: domainToLabels(d)}, qtype: a, class: in},
+			&query{name: &qname{labels: domainNameToLabels(d)}, qtype: a, class: in},
 		},
 	}
 }
@@ -96,7 +96,7 @@ func Response(query *Message) *Message {
 	return query
 }
 
-func domainToLabels(domain string) []label {
+func domainNameToLabels(domain string) []label {
 	var ls []label
 	for _, v := range strings.Split(domain, ".") {
 		l := &label{
