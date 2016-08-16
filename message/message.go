@@ -87,7 +87,7 @@ func Response(query *Message) *Message {
 	query.answers = append(query.answers, &record{
 		Name:     "thoughtworks.com.",
 		Type:     a,
-		Class:    1,
+		Class:    in,
 		TTL:      300,
 		RDLength: 0,
 		RData:    "161.47.4.2",
