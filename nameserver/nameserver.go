@@ -28,6 +28,9 @@ func Start() error {
 		if err != nil {
 			log.Printf("Error in reading message " + err.Error())
 		}
+		// query, err = message.Parse()
+		// response, err = response.Create(message) (handle it .. look in our db, ask other nameservers, etc)
+		// writeToUDPConnection(response)
 		return err
 	}
 }
