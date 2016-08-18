@@ -1,36 +1,38 @@
 package nameserver
 
 import (
-	"log"
+	"fmt"
 	"net"
 )
 
 const dnsMsgSize = 512
 const port = 8853
 
-func getUDPAddr() *net.UDPAddr {
-	return &net.UDPAddr{
-		IP:   net.ParseIP("127.0.0.1"),
-		Port: port,
-	}
+// Nameserver handles DNS queries
+type Nameserver struct {
+	Addr *net.UDPAddr
+	pcon *net.UDPConn
 }
 
-// Start will begin listening for DNS queries on port 8853
-func Start() error {
-	udpConn, err := net.ListenUDP("udp", getUDPAddr())
+// Connect will begin listening for DNS queries on localhost:8853
+func (n *Nameserver) Connect() error {
+	c, err := net.ListenUDP("udp", n.Addr)
 	if err != nil {
-		return err
+		return fmt.Errorf("unable to connect: %s", err.Error())
 	}
+	n.pcon = c
+	return nil
+}
 
-	for {
-		b := make([]byte, dnsMsgSize)
-		_, _, err := udpConn.ReadFrom(b)
-		if err != nil {
-			log.Printf("Error in reading message " + err.Error())
-		}
-		// query, err = message.Parse()
-		// response, err = response.Create(message) (handle it .. look in our db, ask other nameservers, etc)
-		// writeToUDPConnection(response)
-		return err
+// Serve will begin listening for DNS queries and responses
+func (n *Nameserver) Serve() error {
+	if n.pcon == nil {
+		return fmt.Errorf("not connected: must successfully connect with nameserver.Connect first")
 	}
+	defer n.teardown()
+	return nil
+}
+
+func (n *Nameserver) teardown() error {
+	return n.pcon.Close()
 }

@@ -3,8 +3,9 @@ package main
 import (
 	"fmt"
 	"log"
+	"net"
 
-	"github.com/twtiger/toy-dns-nameserver/nameserver"
+	ns "github.com/twtiger/toy-dns-nameserver/nameserver"
 )
 
 func initLogger() {
@@ -15,8 +16,11 @@ func initLogger() {
 
 func main() {
 	initLogger()
-
-	err := nameserver.Start()
+	n := ns.Nameserver{Addr: &net.UDPAddr{
+		IP:   net.ParseIP("127.0.0.1"),
+		Port: 8853,
+	}}
+	err := n.Connect()
 	if err != nil {
 		errMsg := fmt.Sprintf("Error in starting dns nameserver: %s", err.Error())
 		log.Printf(errMsg)
