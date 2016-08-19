@@ -77,12 +77,11 @@ func (s *NameserverSuite) TestCannotUseServeWithoutConnecting(c *C) {
 //	ips, err := r.LookupHost("www.thoughtworks.com")
 //
 //	c.Assert(err, IsNil)
-//	c.Assert(ips, HasLen, 5)
+//	c.Assert(ips, HasLen, 2)
 //}
 
-func (s *NameserverSuite) TestResponseIsReceived(c *C) {
+func (s *NameserverSuite) TestThatServerIsReplyingOnListeningPort(c *C) {
 	errChan := make(chan error)
-	numChan := make(chan int)
 	addrChan := make(chan *net.UDPAddr)
 
 	ns = localServer(true)
@@ -92,22 +91,18 @@ func (s *NameserverSuite) TestResponseIsReceived(c *C) {
 
 	go func() {
 		b := make([]byte, 512)
-		n, ra, err := conn.ReadFromUDP(b)
+		_, ra, err := conn.ReadFromUDP(b)
 		defer conn.Close()
 
 		addrChan <- ra
 		errChan <- err
-		numChan <- n
 	}()
 
-	p := &mockPacker{}
-	ns.handle(nil, localhost(8845), p)
+	ns.handle(nil, localhost(8845), &mockPacker{})
 
 	retAddr := <-addrChan
 	errRead := <-errChan
-	bytesRead := <-numChan
 	c.Assert(retAddr.IP.String(), Equals, "127.0.0.1")
 	c.Assert(retAddr.Port, Equals, 8899)
 	c.Assert(errRead, IsNil)
-	c.Assert(bytesRead, Equals, 5)
 }
