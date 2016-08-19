@@ -1,11 +1,9 @@
-package main
+package nameserver
 
 import (
 	"fmt"
 	"log"
 	"net"
-
-	ns "github.com/twtiger/toy-dns-nameserver/nameserver"
 )
 
 func initLogger() {
@@ -16,7 +14,7 @@ func initLogger() {
 
 func main() {
 	initLogger()
-	n := ns.Nameserver{Addr: &net.UDPAddr{
+	n := Nameserver{Addr: &net.UDPAddr{
 		IP:   net.ParseIP("127.0.0.1"),
 		Port: 8853,
 	}}

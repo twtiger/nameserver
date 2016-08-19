@@ -1,4 +1,4 @@
-package database
+package nameserver
 
 // Persistance is an interface for a type that is able to lookup queries for a DNS record
 // TODO make better interface name
