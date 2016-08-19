@@ -49,7 +49,7 @@ func (n *Nameserver) handle(b []byte, ra *net.UDPAddr, mp packer) {
 	//	//Unable to unmarshal
 	// do we return a different response to the resolver here?
 	//}
-	err = msg.Respond()
+	err = msg.respond()
 
 	// Do compression
 	p, err := mp.pack(msg)

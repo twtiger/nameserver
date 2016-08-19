@@ -1,16 +1,16 @@
 package nameserver
 
 type packer interface {
-	unpack(b []byte) (Responder, error)
-	pack(Responder) ([]byte, error)
+	unpack(b []byte) (responder, error)
+	pack(responder) ([]byte, error)
 }
 
 type msgPacker struct{}
 
-func (mp *msgPacker) unpack(b []byte) (Responder, error) {
+func (mp *msgPacker) unpack(b []byte) (responder, error) {
 	return nil, nil
 }
 
-func (mp *msgPacker) pack(m Responder) ([]byte, error) {
+func (mp *msgPacker) pack(m responder) ([]byte, error) {
 	return nil, nil
 }

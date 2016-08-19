@@ -2,16 +2,14 @@ package nameserver
 
 import "strings"
 
-// Message represents DNS messages
-type Message struct {
+type message struct {
 	header   *header
 	question *query
 	answers  []*record
 }
 
-// Responder is able to respond to DNS messages
-type Responder interface {
-	Respond() error
+type responder interface {
+	respond() error
 }
 
 type header struct {
@@ -60,8 +58,7 @@ type label struct {
 const a uint16 = 1
 const in uint16 = 1
 
-// CreateMessageFor creates a DNS query based on a given domain string
-func CreateMessageFor(d string) *Message {
+func createMessageFor(d string) *message {
 	header := &header{
 		ID:      1234,
 		QR:      0,
@@ -79,16 +76,15 @@ func CreateMessageFor(d string) *Message {
 		NSCOUNT: 0,
 		ARCOUNT: 0,
 	}
-	return &Message{
+	return &message{
 		header:   header,
 		question: &query{name: &qname{labels: domainNameToLabels(d)}, qtype: a, class: in},
 	}
 }
 
-// Respond changes the message into a response
 // TODO change headers as needed
 // TODO add any error codes if needed
-func (m *Message) Respond() error {
+func (m *message) respond() error {
 	records, _ := retrieve(m.question)
 	m.answers = append(m.answers, records...)
 	return nil

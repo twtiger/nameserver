@@ -7,9 +7,9 @@ type MessageSuite struct{}
 var _ = Suite(&MessageSuite{})
 
 func (s *MessageSuite) TestResourceRecordTypeAForThoughtworks(c *C) {
-	message := CreateMessageFor("www.thoughtworks.com")
+	message := createMessageFor("www.thoughtworks.com")
 
-	message.Respond()
+	message.respond()
 
 	c.Assert(message.question, DeepEquals, &query{
 		name: &qname{
