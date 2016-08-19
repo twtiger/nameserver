@@ -9,7 +9,7 @@ type Message struct {
 	answers  []*record
 }
 
-// Responder is a sensitive type that will respond to DNS messages
+// Responders are able to respond to DNS messages
 type Responder interface {
 	Respond(*Message) (*Message, error)
 }
