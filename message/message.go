@@ -60,7 +60,7 @@ type label struct {
 const a uint16 = 1
 const in uint16 = 1
 
-// Query creates a DNS query based on a given domain string
+// CreateMessageFor creates a DNS query based on a given domain string
 func CreateMessageFor(d string) *Message {
 	header := &header{
 		ID:      1234,
