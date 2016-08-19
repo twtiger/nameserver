@@ -10,9 +10,9 @@ type Messenger interface {
 
 // Message represents DNS messages
 type Message struct {
-	header  *header
-	queries []*query
-	answers []*record
+	header   *header
+	question *query
+	answers  []*record
 }
 
 type header struct {
@@ -62,7 +62,7 @@ const a uint16 = 1
 const in uint16 = 1
 
 // Query creates a DNS query based on a given domain string
-func Query(d string) *Message {
+func CreateMessageFor(d string) *Message {
 	header := &header{
 		ID:      1234,
 		QR:      0,
@@ -81,24 +81,24 @@ func Query(d string) *Message {
 		ARCOUNT: 0,
 	}
 	return &Message{
-		header: header,
-		queries: []*query{
-			&query{name: &qname{labels: domainNameToLabels(d)}, qtype: a, class: in},
-		},
+		header:   header,
+		question: &query{name: &qname{labels: domainNameToLabels(d)}, qtype: a, class: in},
 	}
 }
 
-// Response returns the message with resource records
-func Response(query *Message) *Message {
-	query.answers = append(query.answers, &record{
-		Name:     "thoughtworks.com.",
-		Type:     a,
-		Class:    in,
-		TTL:      300,
-		RDLength: 0,
-		RData:    "161.47.4.2",
-	})
-	return query
+// Respond returns the message with resource records
+func Respond(m *Message) (*Message, error) {
+	records, _ := retrieve(m.question)
+	m.answers = append(m.answers, records...)
+	return m, nil
+}
+
+// Retrieve returns a collection of resource records for a query
+func retrieve(q *query) ([]*record, error) {
+	// TODO: use query to perform a database lookup
+	return []*record{
+		&record{Name: "thoughtworks.com.", Type: a, Class: 1, TTL: 300, RDLength: 0, RData: "161.47.4.2"},
+	}, nil
 }
 
 func domainNameToLabels(domain string) []label {

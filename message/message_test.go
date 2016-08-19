@@ -13,24 +13,23 @@ type MessageSuite struct{}
 var _ = Suite(&MessageSuite{})
 
 func (s *MessageSuite) TestResourceRecordTypeAForThoughtworks(c *C) {
-	message := Query("www.thoughtworks.com")
+	message := CreateMessageFor("www.thoughtworks.com")
 
-	response := Response(message)
+	response, _ := Respond(message)
 
-	c.Assert(response.queries, DeepEquals, []*query{
-		&query{
-			name: &qname{
-				labels: []label{
-					label{len: uint8(len("www")), label: "www"},
-					label{len: uint8(len("thoughtworks")), label: "thoughtworks"},
-					label{len: uint8(len("com")), label: "com"},
-				},
-				nullLabel: 0,
+	c.Assert(response.question, DeepEquals, &query{
+		name: &qname{
+			labels: []label{
+				label{len: uint8(len("www")), label: "www"},
+				label{len: uint8(len("thoughtworks")), label: "thoughtworks"},
+				label{len: uint8(len("com")), label: "com"},
 			},
-			qtype: a,
-			class: in,
+			nullLabel: 0,
 		},
+		qtype: a,
+		class: in,
 	})
+
 	c.Assert(response.answers, DeepEquals, []*record{
 		&record{
 			Name:     "thoughtworks.com.",
