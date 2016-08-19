@@ -7,10 +7,10 @@ type Persistance interface {
 }
 
 // Database holds DNS Zones and their corresponding Records in a tree-like structure
-type Database struct{}
+type database struct{}
 
 // Lookup takes a record name, type, and class, and returns a list of corresponding records and an error
-func (p *Database) Lookup(name string, qType, qClass int) ([]Record, error) {
+func (p *database) Lookup(name string, qType, qClass int) ([]Record, error) {
 	// TODO
 	return nil, nil
 }
