@@ -2,17 +2,16 @@ package message
 
 import "strings"
 
-// Messenger is a dutiful type that packages and unpackages DNS messages
-type Messenger interface {
-	Unpack(b []byte) (*Message, error)
-	Pack(*Message) ([]byte, error)
-}
-
 // Message represents DNS messages
 type Message struct {
 	header   *header
 	question *query
 	answers  []*record
+}
+
+// Responder is a sensitive type that will respond to DNS messages
+type Responder interface {
+	Respond(*Message) (*Message, error)
 }
 
 type header struct {
