@@ -9,9 +9,9 @@ type Message struct {
 	answers  []*record
 }
 
-// Responders are able to respond to DNS messages
+// Responder is able to respond to DNS messages
 type Responder interface {
-	Respond(*Message) (*Message, error)
+	Respond() error
 }
 
 type header struct {
@@ -85,11 +85,13 @@ func CreateMessageFor(d string) *Message {
 	}
 }
 
-// Respond returns the message with resource records
-func Respond(m *Message) (*Message, error) {
+// Respond changes the message into a response
+// TODO change headers as needed
+// TODO add any error codes if needed
+func (m *Message) Respond() error {
 	records, _ := retrieve(m.question)
 	m.answers = append(m.answers, records...)
-	return m, nil
+	return nil
 }
 
 // Retrieve returns a collection of resource records for a query

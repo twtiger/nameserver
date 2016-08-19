@@ -100,11 +100,14 @@ func (s *NameserverSuite) TestResponseIsReceived(c *C) {
 		numChan <- n
 	}()
 
-	ns.handle(nil, localhost(8845))
+	p := &mockPacker{}
+	ns.handle(nil, localhost(8845), p)
 
 	retAddr := <-addrChan
+	errRead := <-errChan
+	bytesRead := <-numChan
 	c.Assert(retAddr.IP.String(), Equals, "127.0.0.1")
 	c.Assert(retAddr.Port, Equals, 8899)
-	c.Assert(<-errChan, IsNil)
-	c.Assert(<-numChan, Equals, 5)
+	c.Assert(errRead, IsNil)
+	c.Assert(bytesRead, Equals, 5)
 }

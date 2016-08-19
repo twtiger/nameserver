@@ -33,7 +33,8 @@ func (n *Nameserver) Serve() error {
 		if err != nil {
 			return err
 		}
-		n.handle(bs, ra)
+		p := &msgPacker{}
+		n.handle(bs, ra, p)
 	}
 }
 
@@ -41,24 +42,22 @@ func (n *Nameserver) teardown() error {
 	return n.ucon.Close()
 }
 
-func (n *Nameserver) handle(b []byte, ra *net.UDPAddr) {
+func (n *Nameserver) handle(b []byte, ra *net.UDPAddr, mp packer) {
 	// TODO: Waiting on interface agreement
-	//msg, err := m.Unpack(b)
+	msg, err := mp.unpack(b)
 	//if err != nil {
 	//	//Unable to unmarshal
+	// do we return a different response to the resolver here?
 	//}
-	//res, err := r.Respond(msg)
-	//if err != nil {
-	//	return err
-	//}
-	//// Do compression
-	//p, err := m.Pack(res)
+	err = msg.Respond()
+
+	// Do compression
+	p, err := mp.pack(msg)
 	//if err != nil {
 	//	return err
 	//}
 
-	p := []byte("hello")
-	_, err := n.ucon.WriteTo(p, ra)
+	_, err = n.ucon.WriteTo(p, ra)
 	if err != nil {
 		fmt.Printf("err: %s\n", err.Error())
 	}

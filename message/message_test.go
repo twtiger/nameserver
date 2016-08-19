@@ -15,9 +15,9 @@ var _ = Suite(&MessageSuite{})
 func (s *MessageSuite) TestResourceRecordTypeAForThoughtworks(c *C) {
 	message := CreateMessageFor("www.thoughtworks.com")
 
-	response, _ := Respond(message)
+	message.Respond()
 
-	c.Assert(response.question, DeepEquals, &query{
+	c.Assert(message.question, DeepEquals, &query{
 		name: &qname{
 			labels: []label{
 				label{len: uint8(len("www")), label: "www"},
@@ -30,7 +30,7 @@ func (s *MessageSuite) TestResourceRecordTypeAForThoughtworks(c *C) {
 		class: in,
 	})
 
-	c.Assert(response.answers, DeepEquals, []*record{
+	c.Assert(message.answers, DeepEquals, []*record{
 		&record{
 			Name:     "thoughtworks.com.",
 			Type:     1,
