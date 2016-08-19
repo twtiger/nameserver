@@ -11,7 +11,7 @@ deps:
 	go get github.com/golang/lint/golint
 	go get gopkg.in/check.v1
 	go get golang.org/x/tools/cmd/cover
-	go get github.com/bogdanvich/dns_resolver
+	go get github.com/bogdanovich/dns_resolver
 
 ci: lint test
 
