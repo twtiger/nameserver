@@ -42,14 +42,10 @@ type query struct {
 }
 
 type qname struct {
-	labels    []label
-	nullLabel byte
+	labels []label
 }
 
-type label struct {
-	len   uint8
-	label string
-}
+type label string
 
 func createMessageFor(d string) *message {
 	header := &header{
@@ -84,27 +80,17 @@ func createMessageFor(d string) *message {
 // TODO change headers as needed
 // TODO add any error codes if needed
 func (m *message) respond() error {
-	records, _ := retrieve(m.question)
+	records := []*record{
+		&record{Name: "thoughtworks.com.", Type: qtypeA, Class: qclassIN, TTL: 300, RDLength: 0, RData: "161.47.4.2"},
+	}
 	m.answers = append(m.answers, records...)
 	return nil
 }
 
-// Retrieve returns a collection of resource records for a query
-func retrieve(q *query) ([]*record, error) {
-	// TODO: use query to perform a database lookup
-	return []*record{
-		&record{Name: "thoughtworks.com.", Type: qtypeA, Class: qclassIN, TTL: 300, RDLength: 0, RData: "161.47.4.2"},
-	}, nil
-}
-
 func domainNameToLabels(domain string) []label {
-	var ls []label
-	for _, v := range strings.Split(domain, ".") {
-		l := &label{
-			len:   uint8(len(v)),
-			label: v,
-		}
-		ls = append(ls, *l)
+	labels := []label{}
+	for _, p := range strings.Split(domain, ".") {
+		labels = append(labels, label(p))
 	}
-	return ls
+	return labels
 }

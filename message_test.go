@@ -13,12 +13,7 @@ func (s *MessageSuite) TestResourceRecordTypeAForThoughtworks(c *C) {
 
 	c.Assert(message.question, DeepEquals, &query{
 		qname: &qname{
-			labels: []label{
-				label{len: uint8(len("www")), label: "www"},
-				label{len: uint8(len("thoughtworks")), label: "thoughtworks"},
-				label{len: uint8(len("com")), label: "com"},
-			},
-			nullLabel: 0,
+			labels: []label{"www", "thoughtworks", "com"},
 		},
 		qtype:  qtypeA,
 		qclass: qclassIN,

@@ -27,10 +27,7 @@ func (mp *msgPacker) pack(m *message) ([]byte, error) {
 }
 
 func extractLabels(length uint8, labels []label, b []byte) []label {
-	lab := label{
-		len:   uint8(length),
-		label: string(b[:length]),
-	}
+	lab := label(string(b[:length]))
 	labels = append(labels, lab)
 
 	nextLength := uint8(b[length])
