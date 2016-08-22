@@ -18,7 +18,7 @@ func (mp *msgPacker) unpack(b []byte) (*message, error) {
 	domain := extractLabels(nextLength, labels, b[13:])
 
 	return &message{
-		question: &query{qname: &qname{labels: domain}},
+		question: &query{qname: domain},
 	}, nil
 }
 
