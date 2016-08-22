@@ -28,8 +28,8 @@ type header struct {
 
 type record struct {
 	Name     string
-	Type     uint16
-	Class    uint16
+	Type     qType
+	Class    qClass
 	TTL      uint32
 	RDLength uint16
 	RData    string
@@ -37,8 +37,8 @@ type record struct {
 
 type query struct {
 	qname  *qname
-	qtype  uint16
-	qclass uint16
+	qtype  qType
+	qclass qClass
 }
 
 type qname struct {
@@ -50,9 +50,6 @@ type label struct {
 	len   uint8
 	label string
 }
-
-const a uint16 = 1
-const in uint16 = 1
 
 func createMessageFor(d string) *message {
 	header := &header{
@@ -78,8 +75,8 @@ func createMessageFor(d string) *message {
 			qname: &qname{
 				labels: domainNameToLabels(d),
 			},
-			qtype:  a,
-			qclass: in,
+			qtype:  qtypeA,
+			qclass: qclassIN,
 		},
 	}
 }
@@ -96,7 +93,7 @@ func (m *message) respond() error {
 func retrieve(q *query) ([]*record, error) {
 	// TODO: use query to perform a database lookup
 	return []*record{
-		&record{Name: "thoughtworks.com.", Type: a, Class: 1, TTL: 300, RDLength: 0, RData: "161.47.4.2"},
+		&record{Name: "thoughtworks.com.", Type: qtypeA, Class: qclassIN, TTL: 300, RDLength: 0, RData: "161.47.4.2"},
 	}, nil
 }
 

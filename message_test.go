@@ -20,8 +20,8 @@ func (s *MessageSuite) TestResourceRecordTypeAForThoughtworks(c *C) {
 			},
 			nullLabel: 0,
 		},
-		qtype:  a,
-		qclass: in,
+		qtype:  qtypeA,
+		qclass: qclassIN,
 	})
 
 	c.Assert(message.answers, DeepEquals, []*record{
