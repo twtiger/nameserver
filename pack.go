@@ -1,40 +1,44 @@
 package nameserver
 
-import "fmt"
+import "errors"
+
+const headerLength = 12
 
 type packer interface {
 	unpack(b []byte) (*message, error)
 	pack(*message) ([]byte, error)
 }
 
-type msgPacker struct{}
+type msgPacker struct {
+}
 
 func (mp *msgPacker) unpack(b []byte) (*message, error) {
-	nextLength := uint8(b[12]) // first byte after headers
-	if nextLength == 0 {
-		return nil, fmt.Errorf("No question to extract")
-	}
-	var labels []label
-	domain := extractLabels(nextLength, labels, b[13:])
-
-	return &message{
-		question: &query{qname: domain},
-	}, nil
+	return nil, nil
 }
 
 func (mp *msgPacker) pack(m *message) ([]byte, error) {
 	return nil, nil
 }
 
-func extractLabels(length uint8, labels []label, b []byte) []label {
-	lab := label(string(b[:length]))
-	labels = append(labels, lab)
+func extractLabels(b []byte) (l []label, remaining []byte, err error) {
 
-	nextLength := uint8(b[length])
-
-	if nextLength == 0 {
-		return labels
+	if b[0] == 0 {
+		return nil, nil, errors.New("no question to extract")
 	}
-	b = b[length+1:]
-	return extractLabels(nextLength, labels, b)
+
+	for b[0] != 0 {
+		length := b[0]
+		lab := label(string(b[1 : length+1]))
+		l = append(l, lab)
+		b = b[length+1:]
+	}
+
+	return l, b[1:], nil // don't return the remaining null byte
+}
+
+func extractHeaders(in []byte) ([]byte, error) {
+	if len(in) < headerLength {
+		return nil, errors.New("Headers are too short")
+	}
+	return in[headerLength:], nil
 }

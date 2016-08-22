@@ -1,57 +1,66 @@
 package nameserver
 
-import . "gopkg.in/check.v1"
+import (
+	. "gopkg.in/check.v1"
+)
 
 type PackSuite struct{}
 
 var _ = Suite(&PackSuite{})
 
-func (s *PackSuite) TestUnpackSingleQName(c *C) {
-	p := msgPacker{}
-	b := make([]byte, 12)
-	b = append(b, byte(3))
-	b = append(b, []byte("www")...)
-	b = append(b, byte(0))
-
-	msg, err := p.unpack(b)
-
-	c.Assert(err, IsNil)
-	qname := msg.question.qname
-	c.Assert(len(qname[0]), Equals, 3)
-	c.Assert(qname[0], Equals, label("www"))
+func (s *PackSuite) Test_extractHeaders_returnsSliceWithoutHeaders(c *C) {
+	b := []byte{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2}
+	rem, _ := extractHeaders(b)
+	c.Assert(rem, DeepEquals, []byte{1, 2})
 }
 
-func (s *PackSuite) TestUnpackMultipleQNames(c *C) {
-	p := msgPacker{}
-	b := make([]byte, 12)
-	b = append(b, byte(3))
+func (s *PackSuite) Test_extractHeaders_returnsErrorWhenGivenSliceIsTooSmall(c *C) {
+	_, e := extractHeaders([]byte{1, 2, 3})
+	c.Assert(e, Not(IsNil))
+}
+
+func (s *PackSuite) Test_extractLabels_canParseSingleLabel(c *C) {
+	b := []byte{3, byte('w'), byte('w'), byte('w'), 0, 0, 1, 0, 13}
+
+	labels, remaining, err := extractLabels(b)
+
+	c.Assert(err, IsNil)
+
+	c.Assert(labels[0], Equals, label("www"))
+	c.Assert(len(remaining), Equals, 4)
+}
+
+func (s *PackSuite) Test_extractLabels_returnsRemainingBytes(c *C) {
+	b := []byte{3, byte('w'), byte('w'), byte('w'), 0, 0, 1, 0, 13}
+
+	_, remaining, err := extractLabels(b)
+
+	c.Assert(err, IsNil)
+	c.Assert(len(remaining), Equals, 4)
+}
+
+func (s *PackSuite) Test_extractLabels_canParseMoreThanOneLabel(c *C) {
+	b := []byte{3}
 	b = append(b, []byte("www")...)
-	b = append(b, byte(12))
+	b = append(b, 12)
 	b = append(b, []byte("thoughtworks")...)
-	b = append(b, byte(3))
+	b = append(b, 3)
 	b = append(b, []byte("com")...)
-	b = append(b, byte(0))
+	b = append(b, []byte{0, 0, 1, 3, 4}...)
 
-	msg, err := p.unpack(b)
+	labels, _, err := extractLabels(b)
 
 	c.Assert(err, IsNil)
 
-	qname := msg.question.qname
-	c.Assert(len(qname[0]), Equals, 3)
-	c.Assert(qname[0], Equals, label("www"))
-	c.Assert(len(qname[1]), Equals, 12)
-	c.Assert(qname[1], Equals, label("thoughtworks"))
-	c.Assert(len(qname[2]), Equals, 3)
-	c.Assert(qname[2], Equals, label("com"))
+	c.Assert(labels[0], Equals, label("www"))
+	c.Assert(labels[1], Equals, label("thoughtworks"))
+	c.Assert(labels[2], Equals, label("com"))
 }
 
-func (s *PackSuite) TestUnpackEmptyQuestionReturnsError(c *C) {
-	p := msgPacker{}
-	b := make([]byte, 12)
-	b = append(b, byte(0))
+func (s *PackSuite) Test_extractLabels_forEmptyQuestionReturnsError(c *C) {
+	b := []byte{0}
 
-	msg, err := p.unpack(b)
+	_, _, err := extractLabels(b)
 
-	c.Assert(err, ErrorMatches, "No question to extract")
-	c.Assert(msg, IsNil)
+	c.Assert(err, ErrorMatches, "no question to extract")
 }
