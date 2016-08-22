@@ -17,8 +17,8 @@ func (s *PackSuite) TestUnpackSingleQName(c *C) {
 
 	c.Assert(err, IsNil)
 	qname := msg.question.qname
-	c.Assert(qname.labels[0].len, Equals, uint8(3))
-	c.Assert(qname.labels[0].label, Equals, "www")
+	c.Assert(qname[0].len, Equals, uint8(3))
+	c.Assert(qname[0].label, Equals, "www")
 }
 
 func (s *PackSuite) TestUnpackMultipleQNames(c *C) {
@@ -37,12 +37,12 @@ func (s *PackSuite) TestUnpackMultipleQNames(c *C) {
 	c.Assert(err, IsNil)
 
 	qname := msg.question.qname
-	c.Assert(qname.labels[0].len, Equals, uint8(3))
-	c.Assert(qname.labels[0].label, Equals, "www")
-	c.Assert(qname.labels[1].len, Equals, uint8(12))
-	c.Assert(qname.labels[1].label, Equals, "thoughtworks")
-	c.Assert(qname.labels[2].len, Equals, uint8(3))
-	c.Assert(qname.labels[2].label, Equals, "com")
+	c.Assert(qname[0].len, Equals, uint8(3))
+	c.Assert(qname[0].label, Equals, "www")
+	c.Assert(qname[1].len, Equals, uint8(12))
+	c.Assert(qname[1].label, Equals, "thoughtworks")
+	c.Assert(qname[2].len, Equals, uint8(3))
+	c.Assert(qname[2].label, Equals, "com")
 }
 
 func (s *PackSuite) TestUnpackEmptyQuestionReturnsError(c *C) {

@@ -36,14 +36,9 @@ type record struct {
 }
 
 type query struct {
-	qname  *qname
+	qname  []label
 	qtype  qType
 	qclass qClass
-}
-
-type qname struct {
-	labels    []label
-	nullLabel byte
 }
 
 type label struct {
@@ -72,9 +67,7 @@ func createMessageFor(d string) *message {
 	return &message{
 		header: header,
 		question: &query{
-			qname: &qname{
-				labels: domainNameToLabels(d),
-			},
+			qname:  domainNameToLabels(d),
 			qtype:  qtypeA,
 			qclass: qclassIN,
 		},
