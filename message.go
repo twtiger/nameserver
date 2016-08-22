@@ -8,10 +8,6 @@ type message struct {
 	answers  []*record
 }
 
-type responder interface {
-	respond() error
-}
-
 type header struct {
 	ID      uint16
 	QR      byte
