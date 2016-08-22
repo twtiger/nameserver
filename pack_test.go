@@ -16,9 +16,9 @@ func (s *PackSuite) TestUnpackSingleQName(c *C) {
 	msg, err := p.unpack(b)
 
 	c.Assert(err, IsNil)
-	query := msg.question.qname
-	c.Assert(query.labels[0].len, Equals, uint8(3))
-	c.Assert(query.labels[0].label, Equals, "www")
+	qname := msg.question.qname
+	c.Assert(qname.labels[0].len, Equals, uint8(3))
+	c.Assert(qname.labels[0].label, Equals, "www")
 }
 
 func (s *PackSuite) TestUnpackMultipleQNames(c *C) {
@@ -36,13 +36,13 @@ func (s *PackSuite) TestUnpackMultipleQNames(c *C) {
 
 	c.Assert(err, IsNil)
 
-	query := msg.question.qname
-	c.Assert(query.labels[0].len, Equals, uint8(3))
-	c.Assert(query.labels[0].label, Equals, "www")
-	c.Assert(query.labels[1].len, Equals, uint8(12))
-	c.Assert(query.labels[1].label, Equals, "thoughtworks")
-	c.Assert(query.labels[2].len, Equals, uint8(3))
-	c.Assert(query.labels[2].label, Equals, "com")
+	qname := msg.question.qname
+	c.Assert(qname.labels[0].len, Equals, uint8(3))
+	c.Assert(qname.labels[0].label, Equals, "www")
+	c.Assert(qname.labels[1].len, Equals, uint8(12))
+	c.Assert(qname.labels[1].label, Equals, "thoughtworks")
+	c.Assert(qname.labels[2].len, Equals, uint8(3))
+	c.Assert(qname.labels[2].label, Equals, "com")
 }
 
 func (s *PackSuite) TestUnpackEmptyQuestionReturnsError(c *C) {
