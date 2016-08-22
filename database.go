@@ -1,19 +1,38 @@
 package nameserver
 
-// Persistance is an interface for a type that is able to lookup queries for a DNS record
-// TODO make better interface name
-type Persistance interface {
-	Lookup(name string, qType, qClass int) ([]Record, error)
+const oneHour = 3600
+
+var tigerRecord1 = &record{
+	Name:  "twtiger.com.",
+	Type:  qtypeA,
+	Class: qclassIN,
+	TTL:   oneHour,
+	RData: "123.123.7.8",
 }
 
-// Database holds DNS Zones and their corresponding Records in a tree-like structure
-type database struct{}
-
-// Lookup takes a record name, type, and class, and returns a list of corresponding records and an error
-func (p *database) Lookup(name string, qType, qClass int) ([]Record, error) {
-	// TODO
-	return nil, nil
+var tigerRecord2 = &record{
+	Name:  "twtiger.com.",
+	Type:  qtypeA,
+	Class: qclassIN,
+	TTL:   oneHour,
+	RData: "78.78.90.1",
 }
 
-// Record is a DNS record
-type Record struct{}
+var database map[string][]*record
+
+func init() {
+	database = make(map[string][]*record)
+	database["twtiger.com."] = []*record{tigerRecord1, tigerRecord2}
+}
+
+func retrieve(labels []label) (rrs []*record) {
+	recordName := ""
+	for _, l := range labels {
+		recordName += string(l) + "."
+	}
+
+	if rrs, ok := database[recordName]; ok {
+		return rrs
+	}
+	return []*record{}
+}
