@@ -5,6 +5,15 @@ import "errors"
 const headerLength = 12
 
 func (m *message) deserialize(b []byte) error {
+	rem, err := extractHeaders(b)
+	if err != nil {
+		return err
+	}
+	labels, _, err := extractLabels(rem)
+	if err != nil {
+		return err
+	}
+	m.query = &query{qname: labels}
 	return nil
 }
 
@@ -30,7 +39,7 @@ func extractLabels(b []byte) (l []label, remaining []byte, err error) {
 
 func extractHeaders(in []byte) ([]byte, error) {
 	if len(in) < headerLength {
-		return nil, errors.New("Headers are too short")
+		return nil, errors.New("missing header fields")
 	}
 	return in[headerLength:], nil
 }

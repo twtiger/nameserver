@@ -16,7 +16,7 @@ func (s *SerializationSuite) Test_extractHeaders_returnsSliceWithoutHeaders(c *C
 
 func (s *SerializationSuite) Test_extractHeaders_returnsErrorWhenGivenSliceIsTooSmall(c *C) {
 	_, e := extractHeaders([]byte{1, 2, 3})
-	c.Assert(e, Not(IsNil))
+	c.Assert(e, ErrorMatches, "missing header fields")
 }
 
 func (s *SerializationSuite) Test_extractLabels_canParseSingleLabel(c *C) {
@@ -59,8 +59,37 @@ func (s *SerializationSuite) Test_extractLabels_canParseMoreThanOneLabel(c *C) {
 
 func (s *SerializationSuite) Test_extractLabels_forEmptyQuestionReturnsError(c *C) {
 	b := []byte{0}
-
 	_, _, err := extractLabels(b)
 
 	c.Assert(err, ErrorMatches, "no question to extract")
+}
+
+func (s *SerializationSuite) Test_deserialize_returnsMessageWithQuery(c *C) {
+	b := make([]byte, 12)
+	b = append(b, 3)
+	b = append(b, []byte("www")...)
+	b = append(b, 0)
+	b = append(b, []byte{0, 0, 1, 3, 4}...)
+
+	msg := &message{}
+	err := msg.deserialize(b)
+
+	c.Assert(err, IsNil)
+	c.Assert(msg.query.qname[0], Equals, label("www"))
+}
+
+func (s *SerializationSuite) Test_deserialize_returnsErrorIfHeadersAreInvalid(c *C) {
+	b := make([]byte, 1)
+
+	msg := &message{}
+	err := msg.deserialize(b)
+	c.Assert(err, Not(IsNil))
+}
+
+func (s *SerializationSuite) Test_deserialize_returnsErrorQueryIsInvalid(c *C) {
+	b := make([]byte, 13)
+
+	msg := &message{}
+	err := msg.deserialize(b)
+	c.Assert(err, Not(IsNil))
 }
