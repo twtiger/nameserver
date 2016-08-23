@@ -44,7 +44,7 @@ func (n *Nameserver) teardown() error {
 
 func (n *Nameserver) handle(b []byte, ra *net.UDPAddr, mp packer) {
 	// TODO: Waiting on interface agreement
-	msg, err := mp.unpack(b)
+	msg, err := mp.deserialize(b)
 	//if err != nil {
 	//	//Unable to unmarshal
 	// do we return a different response to the resolver here?
@@ -52,7 +52,7 @@ func (n *Nameserver) handle(b []byte, ra *net.UDPAddr, mp packer) {
 	err = msg.respond()
 
 	// Do compression
-	p, err := mp.pack(msg)
+	p, err := mp.serialize(msg)
 	//if err != nil {
 	//	return err
 	//}

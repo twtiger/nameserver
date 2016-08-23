@@ -5,18 +5,18 @@ import "errors"
 const headerLength = 12
 
 type packer interface {
-	unpack(b []byte) (*message, error)
-	pack(*message) ([]byte, error)
+	deserialize(b []byte) (*message, error)
+	serialize(*message) ([]byte, error)
 }
 
 type msgPacker struct {
 }
 
-func (mp *msgPacker) unpack(b []byte) (*message, error) {
+func (mp *msgPacker) deserialize(b []byte) (*message, error) {
 	return nil, nil
 }
 
-func (mp *msgPacker) pack(m *message) ([]byte, error) {
+func (mp *msgPacker) serialize(m *message) ([]byte, error) {
 	return nil, nil
 }
 
