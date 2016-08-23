@@ -2,7 +2,7 @@ PROGRAM_NAME=toy-dns-nameserver
 default: lint test
 
 lint:
-	golint ./... | egrep -v -f lint.ignores || true
+	golint ./...
 
 test:
 	go test -cover -v ./...
