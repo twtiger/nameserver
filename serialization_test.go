@@ -93,3 +93,33 @@ func (s *SerializationSuite) Test_deserialize_returnsErrorQueryIsInvalid(c *C) {
 	err := msg.deserialize(b)
 	c.Assert(err, Not(IsNil))
 }
+
+func (s *SerializationSuite) Test_serializeLabels_returnsByteArrayForSingleLabel(c *C) {
+	labels := []label{label("www")}
+
+	exp := []byte{3}
+	exp = append(exp, []byte("www")...)
+	exp = append(exp, 0)
+
+	b, err := serializeLabels(labels)
+
+	c.Assert(err, IsNil)
+	c.Assert(b, DeepEquals, exp)
+}
+
+func (s *SerializationSuite) Test_serializeLabels_returnsByteArrayForMultipleLabels(c *C) {
+	labels := []label{label("www"), label("thoughtworks"), label("com")}
+
+	exp := []byte{3}
+	exp = append(exp, []byte("www")...)
+	exp = append(exp, 12)
+	exp = append(exp, []byte("thoughtworks")...)
+	exp = append(exp, 3)
+	exp = append(exp, []byte("com")...)
+	exp = append(exp, 0)
+
+	b, err := serializeLabels(labels)
+
+	c.Assert(err, IsNil)
+	c.Assert(b, DeepEquals, exp)
+}

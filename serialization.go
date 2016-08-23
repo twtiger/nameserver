@@ -21,6 +21,16 @@ func (m *message) serialize() ([]byte, error) {
 	return nil, nil
 }
 
+func serializeLabels(l []label) ([]byte, error) {
+	var b []byte
+	for _, e := range l {
+		b = append(b, byte(len(e)))
+		b = append(b, []byte(e)...)
+	}
+	b = append(b, 0)
+	return b, nil
+}
+
 func extractLabels(b []byte) (l []label, remaining []byte, err error) {
 
 	if b[0] == 0 {
