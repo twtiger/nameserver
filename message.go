@@ -44,10 +44,43 @@ type message struct {
 
 // TODO add any error codes if needed
 // TODO this should return a new message
-func (m *message) respond() error {
-	records := []*record{
-		&record{Name: "thoughtworks.com.", Type: qtypeA, Class: qclassIN, TTL: 300, RDLength: 0, RData: "161.47.4.2"},
+// func (m *message) respond() error {
+// 	records := []*record{
+// 		&record{Name: "thoughtworks.com.", Type: qtypeA, Class: qclassIN, TTL: 300, RDLength: 0, RData: "161.47.4.2"},
+// 	}
+// 	m.answers = append(m.answers, records...)
+// 	return nil
+// }
+
+func (m *message) response() *message {
+	return &message{
+		header: &header{
+			ID:      testId,
+			QR:      responseCode,
+			AA:      inAuthority,
+			QDCOUNT: oneQuestion,
+			ANCOUNT: twoRRs,
+		},
+		query: &query{
+			qname:  []label{"twtiger", "com"},
+			qtype:  qtypeA,
+			qclass: qclassIN,
+		},
+		answers: []*record{
+			&record{
+				Name:  "twtiger.com.",
+				Type:  qtypeA,
+				Class: qclassIN,
+				TTL:   oneHour,
+				RData: "123.123.7.8",
+			},
+			&record{
+				Name:  "twtiger.com.",
+				Type:  qtypeA,
+				Class: qclassIN,
+				TTL:   oneHour,
+				RData: "78.78.90.1",
+			},
+		},
 	}
-	m.answers = append(m.answers, records...)
-	return nil
 }

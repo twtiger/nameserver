@@ -44,8 +44,6 @@ func (n *Nameserver) teardown() error {
 func (n *Nameserver) handle(b []byte, ra *net.UDPAddr, msg dnsMessage) {
 	err := msg.deserialize(b)
 
-	err = msg.respond()
-
 	p, err := msg.serialize()
 
 	_, err = n.ucon.WriteTo(p, ra)

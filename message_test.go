@@ -10,6 +10,12 @@ type MessageSuite struct{}
 
 var _ = Suite(&MessageSuite{})
 
+const testId = 1234
+const responseCode = 1
+const inAuthority = 1
+const oneQuestion = 1
+const twoRRs = 2
+
 func domainNameToLabels(domain string) []label {
 	labels := []label{}
 	for _, p := range strings.Split(domain, ".") {
@@ -18,9 +24,11 @@ func domainNameToLabels(domain string) []label {
 	return labels
 }
 
-func createMessageFor(d string) *message {
+func createQueryFor(d string) *message {
 	return &message{
-		header: &header{},
+		header: &header{
+			ID: testId,
+		},
 		query: &query{
 			qname:  domainNameToLabels(d),
 			qtype:  qtypeA,
@@ -29,25 +37,38 @@ func createMessageFor(d string) *message {
 	}
 }
 
-func (s *MessageSuite) TestResourceRecordTypeAForThoughtworks(c *C) {
-	message := createMessageFor("www.thoughtworks.com")
+func (s *MessageSuite) Test_ResponseForAuthoritativeZoneQuery(c *C) {
+	q := createQueryFor("twtiger.com")
 
-	message.respond()
+	r := q.response()
 
-	c.Assert(message.query, DeepEquals, &query{
-		qname:  []label{"www", "thoughtworks", "com"},
+	c.Assert(r.header, DeepEquals, &header{
+		ID:      testId,
+		QR:      responseCode,
+		AA:      inAuthority,
+		QDCOUNT: oneQuestion,
+		ANCOUNT: twoRRs,
+	})
+	c.Assert(r.query, DeepEquals, &query{
+		qname:  []label{"twtiger", "com"},
 		qtype:  qtypeA,
 		qclass: qclassIN,
 	})
-
-	c.Assert(message.answers, DeepEquals, []*record{
+	c.Assert(len(r.answers), Equals, 2)
+	c.Assert(r.answers[0], DeepEquals,
 		&record{
-			Name:     "thoughtworks.com.",
-			Type:     1,
-			Class:    1,
-			TTL:      300,
-			RDLength: 0,
-			RData:    "161.47.4.2",
-		},
-	})
+			Name:  "twtiger.com.",
+			Type:  qtypeA,
+			Class: qclassIN,
+			TTL:   oneHour,
+			RData: "123.123.7.8",
+		})
+	c.Assert(r.answers[1], DeepEquals,
+		&record{
+			Name:  "twtiger.com.",
+			Type:  qtypeA,
+			Class: qclassIN,
+			TTL:   oneHour,
+			RData: "78.78.90.1",
+		})
 }
