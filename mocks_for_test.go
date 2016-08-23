@@ -1,11 +1,15 @@
 package nameserver
 
-type mockPacker struct{}
+type mockMessage struct{}
 
-func (mp *mockPacker) deserialize(b []byte) (*message, error) {
-	return &message{}, nil
+func (m *mockMessage) deserialize(b []byte) error {
+	return nil
 }
 
-func (mp *mockPacker) serialize(m *message) ([]byte, error) {
+func (m *mockMessage) serialize() ([]byte, error) {
 	return []byte("hello"), nil
+}
+
+func (m *mockMessage) respond() error {
+	return nil
 }

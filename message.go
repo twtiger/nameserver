@@ -43,6 +43,7 @@ type message struct {
 }
 
 // TODO add any error codes if needed
+// TODO this should return a new message
 func (m *message) respond() error {
 	records := []*record{
 		&record{Name: "thoughtworks.com.", Type: qtypeA, Class: qclassIN, TTL: 300, RDLength: 0, RData: "161.47.4.2"},

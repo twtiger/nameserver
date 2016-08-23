@@ -98,7 +98,7 @@ func (s *NameserverSuite) TestThatServerIsReplyingOnListeningPort(c *C) {
 		errChan <- err
 	}()
 
-	ns.handle(nil, localhost(8845), &mockPacker{})
+	ns.handle(nil, localhost(8845), &mockMessage{})
 
 	retAddr := <-addrChan
 	errRead := <-errChan
