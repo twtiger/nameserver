@@ -1,17 +1,40 @@
 package nameserver
 
-import . "gopkg.in/check.v1"
+import (
+	"strings"
+
+	. "gopkg.in/check.v1"
+)
 
 type MessageSuite struct{}
 
 var _ = Suite(&MessageSuite{})
+
+func domainNameToLabels(domain string) []label {
+	labels := []label{}
+	for _, p := range strings.Split(domain, ".") {
+		labels = append(labels, label(p))
+	}
+	return labels
+}
+
+func createMessageFor(d string) *message {
+	return &message{
+		header: &header{},
+		query: &query{
+			qname:  domainNameToLabels(d),
+			qtype:  qtypeA,
+			qclass: qclassIN,
+		},
+	}
+}
 
 func (s *MessageSuite) TestResourceRecordTypeAForThoughtworks(c *C) {
 	message := createMessageFor("www.thoughtworks.com")
 
 	message.respond()
 
-	c.Assert(message.question, DeepEquals, &query{
+	c.Assert(message.query, DeepEquals, &query{
 		qname:  []label{"www", "thoughtworks", "com"},
 		qtype:  qtypeA,
 		qclass: qclassIN,

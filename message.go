@@ -1,13 +1,14 @@
 package nameserver
 
-import "strings"
+type label string
 
-type message struct {
-	header   *header
-	question *query
-	answers  []*record
+type query struct {
+	qname  []label
+	qtype  qType
+	qclass qClass
 }
 
+// TODO change headers as needed
 type header struct {
 	ID      uint16
 	QR      byte
@@ -35,43 +36,12 @@ type record struct {
 	RData    string
 }
 
-type query struct {
-	qname  []label
-	qtype  qType
-	qclass qClass
+type message struct {
+	header  *header
+	query   *query
+	answers []*record
 }
 
-type label string
-
-func createMessageFor(d string) *message {
-	header := &header{
-		ID:      1234,
-		QR:      0,
-		OPCODE:  4,
-		AA:      0,
-		TR:      0,
-		RD:      0,
-		RA:      0,
-		Z:       0,
-		AD:      0,
-		CD:      0,
-		RCODE:   make([]byte, 4),
-		QDCOUNT: 1,
-		ANCOUNT: 0,
-		NSCOUNT: 0,
-		ARCOUNT: 0,
-	}
-	return &message{
-		header: header,
-		question: &query{
-			qname:  domainNameToLabels(d),
-			qtype:  qtypeA,
-			qclass: qclassIN,
-		},
-	}
-}
-
-// TODO change headers as needed
 // TODO add any error codes if needed
 func (m *message) respond() error {
 	records := []*record{
@@ -79,12 +49,4 @@ func (m *message) respond() error {
 	}
 	m.answers = append(m.answers, records...)
 	return nil
-}
-
-func domainNameToLabels(domain string) []label {
-	labels := []label{}
-	for _, p := range strings.Split(domain, ".") {
-		labels = append(labels, label(p))
-	}
-	return labels
 }
