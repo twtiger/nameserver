@@ -1,6 +1,9 @@
 package nameserver
 
-import "errors"
+import (
+	"encoding/binary"
+	"errors"
+)
 
 const headerLength = 12
 
@@ -40,6 +43,26 @@ func serializeLabels(l []label) ([]byte, error) {
 	}
 	b = append(b, 0)
 	return b, nil
+}
+
+func serializeAnswer(r []*record) []byte {
+	var b []byte
+	b = append(b, []byte(r[0].Name)...)
+
+	j := make([]byte, 2)
+	binary.BigEndian.PutUint16(j, uint16(r[0].Type))
+	b = append(b, j...)
+
+	k := make([]byte, 2)
+	binary.BigEndian.PutUint16(k, uint16(r[0].Class))
+	b = append(b, k...)
+
+	l := make([]byte, 4)
+	binary.BigEndian.PutUint32(l, uint32(r[0].TTL))
+	b = append(b, l...)
+
+	b = append(b, []byte(r[0].RData)...)
+	return b
 }
 
 func extractLabels(b []byte) (l []label, remaining []byte, err error) {

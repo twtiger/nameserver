@@ -1,8 +1,6 @@
 package nameserver
 
-import (
-	. "gopkg.in/check.v1"
-)
+import . "gopkg.in/check.v1"
 
 type SerializationSuite struct{}
 
@@ -130,6 +128,27 @@ func (s *SerializationSuite) Test_serializeLabels_returnsErrorForNoLabels(c *C) 
 	_, err := serializeLabels(labels)
 
 	c.Assert(err, ErrorMatches, "no labels to serialize")
+}
+func (s *SerializationSuite) Test_serializeAnswer_returnsByteArrayForSingleRecord(c *C) {
+	records := []*record{
+		&record{
+			Name:  "twtiger.com.",
+			Type:  1,
+			Class: 1,
+			TTL:   1,
+			RData: "123.123.7.8",
+		},
+	}
+
+	var exp []byte
+	exp = append(exp, []byte(records[0].Name)...)
+	exp = append(exp, []byte{0, 1}...)
+	exp = append(exp, []byte{0, 1}...)
+	exp = append(exp, []byte{0, 0, 0, 1}...)
+	exp = append(exp, []byte(records[0].RData)...)
+
+	b := serializeAnswer(records)
+	c.Assert(b, DeepEquals, exp)
 }
 
 func (s *SerializationSuite) Test_serializeHeaders_returnsByteArrayofLength12(c *C) {
