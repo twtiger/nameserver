@@ -18,10 +18,21 @@ func (m *message) deserialize(b []byte) error {
 }
 
 func (m *message) serialize() ([]byte, error) {
-	return nil, nil
+	h := serializeHeaders()
+	l, err := serializeLabels(m.query.qname)
+	if err != nil {
+		return nil, err
+	}
+	b := append(h, l...)
+
+	return b, nil
 }
 
 func serializeLabels(l []label) ([]byte, error) {
+	if len(l) == 0 {
+		return nil, errors.New("no labels to serialize")
+	}
+
 	var b []byte
 	for _, e := range l {
 		b = append(b, byte(len(e)))
@@ -52,4 +63,8 @@ func extractHeaders(in []byte) ([]byte, error) {
 		return nil, errors.New("missing header fields")
 	}
 	return in[headerLength:], nil
+}
+
+func serializeHeaders() []byte {
+	return make([]byte, 12)
 }

@@ -123,3 +123,49 @@ func (s *SerializationSuite) Test_serializeLabels_returnsByteArrayForMultipleLab
 	c.Assert(err, IsNil)
 	c.Assert(b, DeepEquals, exp)
 }
+
+func (s *SerializationSuite) Test_serializeLabels_returnsErrorForNoLabels(c *C) {
+	labels := []label{}
+
+	_, err := serializeLabels(labels)
+
+	c.Assert(err, ErrorMatches, "no labels to serialize")
+}
+
+func (s *SerializationSuite) Test_serializeHeaders_returnsByteArrayofLength12(c *C) {
+	b := serializeHeaders()
+	c.Assert(len(b), Equals, 12)
+}
+
+func (s *SerializationSuite) Test_serialize_returnsByteArrayForMessage(c *C) {
+	exp := make([]byte, 12)
+	exp = append(exp, 3)
+	exp = append(exp, []byte("www")...)
+	exp = append(exp, 12)
+	exp = append(exp, []byte("thoughtworks")...)
+	exp = append(exp, 3)
+	exp = append(exp, []byte("com")...)
+	exp = append(exp, 0)
+
+	m := &message{
+		query: &query{
+			qname: []label{label("www"), label("thoughtworks"), label("com")},
+		},
+	}
+
+	b, err := m.serialize()
+	c.Assert(err, IsNil)
+	c.Assert(b, DeepEquals, exp)
+}
+
+func (s *SerializationSuite) Test_serialize_returnsErrorWithNoLabelsToSerialize(c *C) {
+
+	m := &message{
+		query: &query{
+			qname: []label{},
+		},
+	}
+
+	_, err := m.serialize()
+	c.Assert(err, ErrorMatches, "no labels to serialize")
+}
