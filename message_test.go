@@ -10,12 +10,6 @@ type MessageSuite struct{}
 
 var _ = Suite(&MessageSuite{})
 
-const testId = 1234
-const responseCode = 1
-const inAuthority = 1
-const oneQuestion = 1
-const twoRRs = 2
-
 func domainNameToLabels(domain string) []label {
 	labels := []label{}
 	for _, p := range strings.Split(domain, ".") {
@@ -26,9 +20,6 @@ func domainNameToLabels(domain string) []label {
 
 func createQueryFor(d string) *message {
 	return &message{
-		header: &header{
-			ID: testId,
-		},
 		query: &query{
 			qname:  domainNameToLabels(d),
 			qtype:  qtypeA,
@@ -42,13 +33,6 @@ func (s *MessageSuite) Test_ResponseForAuthoritativeZoneQuery(c *C) {
 
 	r := q.response()
 
-	c.Assert(r.header, DeepEquals, &header{
-		ID:      testId,
-		QR:      responseCode,
-		AA:      inAuthority,
-		QDCOUNT: oneQuestion,
-		ANCOUNT: twoRRs,
-	})
 	c.Assert(r.query, DeepEquals, &query{
 		qname:  []label{"twtiger", "com"},
 		qtype:  qtypeA,

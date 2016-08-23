@@ -1,6 +1,7 @@
 package nameserver
 
 import (
+	"errors"
 	"fmt"
 	"net"
 )
@@ -24,16 +25,24 @@ func (n *Nameserver) Connect() error {
 // Serve will begin listening for DNS queries and responses
 func (n *Nameserver) Serve() error {
 	if n.ucon == nil {
-		return fmt.Errorf("not connected: must successfully connect with nameserver.Connect first")
+		return errors.New("not connected: must successfully connect with nameserver.Connect first")
 	}
 	defer n.teardown()
 	for {
-		bs := make([]byte, 512)
-		_, ra, err := n.ucon.ReadFromUDP(bs)
+		b := make([]byte, 512)
+		_, retAddr, err := n.ucon.ReadFromUDP(b)
 		if err != nil {
 			return err
 		}
-		n.handle(bs, ra, &message{})
+		serializedResponse := respondTo(b)
+		n.reply(serializedResponse, retAddr)
+	}
+}
+
+func (n *Nameserver) reply(serializedResponse []byte, retAddr *net.UDPAddr) {
+	_, err := n.ucon.WriteTo(serializedResponse, retAddr)
+	if err != nil {
+		fmt.Printf("err: %s\n", err.Error())
 	}
 }
 
@@ -41,13 +50,9 @@ func (n *Nameserver) teardown() error {
 	return n.ucon.Close()
 }
 
-func (n *Nameserver) handle(b []byte, ra *net.UDPAddr, msg dnsMessage) {
-	err := msg.deserialize(b)
-
-	p, err := msg.serialize()
-
-	_, err = n.ucon.WriteTo(p, ra)
-	if err != nil {
-		fmt.Printf("err: %s\n", err.Error())
-	}
+func respondTo(b []byte) []byte {
+	msg := &message{}
+	_ = msg.deserialize(b)
+	sr, _ := msg.serialize()
+	return sr
 }
