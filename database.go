@@ -1,7 +1,5 @@
 package nameserver
 
-const oneHour = 3600
-
 var tigerRecord1 = &record{
 	Name:  "twtiger.com.",
 	Type:  qtypeA,
