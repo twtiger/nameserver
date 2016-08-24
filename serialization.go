@@ -22,7 +22,7 @@ func (m *message) deserialize(b []byte) error {
 
 func (m *message) serialize() ([]byte, error) {
 	h := serializeHeaders()
-	q, err := serializeQuery(m.query)
+	q, err := m.query.serialize()
 	if err != nil {
 		return nil, err
 	}
@@ -36,7 +36,7 @@ func (m *message) serialize() ([]byte, error) {
 	return b, nil
 }
 
-func serializeQuery(q *query) ([]byte, error) {
+func (q *query) serialize() ([]byte, error) {
 	l, err := serializeLabels(q.qname)
 	if err != nil {
 		return nil, err

@@ -181,7 +181,7 @@ func (s *SerializationSuite) Test_serializeQuery_returnsByteArrayForMessageQuery
 		qclass: qclassIN,
 	}
 
-	b, _ := serializeQuery(q)
+	b, _ := q.serialize()
 	c.Assert(b, DeepEquals, exp)
 }
 
