@@ -24,26 +24,7 @@ type message struct {
 
 func (m *message) response() *message {
 	return &message{
-		query: &query{
-			qname:  []label{"twtiger", "com"},
-			qtype:  qtypeA,
-			qclass: qclassIN,
-		},
-		answers: []*record{
-			&record{
-				Name:  "twtiger.com.",
-				Type:  qtypeA,
-				Class: qclassIN,
-				TTL:   oneHour,
-				RData: "123.123.7.8",
-			},
-			&record{
-				Name:  "twtiger.com.",
-				Type:  qtypeA,
-				Class: qclassIN,
-				TTL:   oneHour,
-				RData: "78.78.90.1",
-			},
-		},
+		query:   m.query,
+		answers: retrieve(m.query.qname),
 	}
 }

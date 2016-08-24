@@ -56,3 +56,16 @@ func (s *MessageSuite) Test_ResponseForAuthoritativeZoneQuery(c *C) {
 			RData: "78.78.90.1",
 		})
 }
+
+func (s *MessageSuite) Test_ResponseForExtNameServerQuery(c *C) {
+	q := createQueryFor("wireshark.org")
+
+	r := q.response()
+
+	c.Assert(r.query, DeepEquals, &query{
+		qname:  []label{"wireshark", "org"},
+		qtype:  qtypeA,
+		qclass: qclassIN,
+	})
+	c.Assert(len(r.answers), Equals, 0)
+}
