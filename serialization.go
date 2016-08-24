@@ -34,36 +34,31 @@ func (q *query) serialize() ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	qt := serializeUint16(uint16(q.qtype))
-	qc := serializeUint16(uint16(q.qclass))
 
-	b := append(l, append(qt, qc...)...)
-	return b, nil
+	return append(l, append(serializeUint16(uint16(q.qtype)), serializeUint16(uint16(q.qclass))...)...), nil
 }
 
 func (r *record) serialize() (b []byte) {
 	b = append(b, []byte(r.Name)...)
 
-	rt := serializeUint16(uint16(r.Type))
-	b = append(b, rt...)
+	b = append(b, serializeUint16(uint16(r.Type))...)
 
-	rc := serializeUint16(uint16(r.Class))
-	b = append(b, rc...)
+	b = append(b, serializeUint16(uint16(r.Class))...)
 
-	rttl := serializeUint32(uint32(r.TTL))
-	b = append(b, rttl...)
+	b = append(b, serializeUint32(uint32(r.TTL))...)
 
 	b = append(b, []byte(r.RData)...)
-	return b
+	return
 }
 
 func (l label) serialize() (b []byte) {
 	b = append(b, byte(len(l)))
 	b = append(b, []byte(l)...)
-	return b
+	return
 }
 
-func serializeLabels(l []label) (b []byte, err error) {
+func serializeLabels(l []label) ([]byte, error) {
+	var b []byte
 	if len(l) == 0 {
 		return nil, errors.New("no labels to serialize")
 	}
@@ -91,7 +86,7 @@ func serializeAnswer(r []*record) (b []byte) {
 	for _, e := range r {
 		b = append(b, e.serialize()...)
 	}
-	return b
+	return
 }
 
 func extractLabels(b []byte) (l []label, remaining []byte, err error) {
