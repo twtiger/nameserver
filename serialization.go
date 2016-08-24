@@ -48,15 +48,35 @@ func (q *query) serialize() ([]byte, error) {
 	return b, nil
 }
 
-func serializeLabels(l []label) ([]byte, error) {
+func (r *record) serialize() (b []byte) {
+	b = append(b, []byte(r.Name)...)
+
+	rt := serializeUint16(uint16(r.Type))
+	b = append(b, rt...)
+
+	rc := serializeUint16(uint16(r.Class))
+	b = append(b, rc...)
+
+	rttl := serializeUint32(uint32(r.TTL))
+	b = append(b, rttl...)
+
+	b = append(b, []byte(r.RData)...)
+	return b
+}
+
+func (l label) serialize() (b []byte) {
+	b = append(b, byte(len(l)))
+	b = append(b, []byte(l)...)
+	return b
+}
+
+func serializeLabels(l []label) (b []byte, err error) {
 	if len(l) == 0 {
 		return nil, errors.New("no labels to serialize")
 	}
 
-	var b []byte
 	for _, e := range l {
-		b = append(b, byte(len(e)))
-		b = append(b, []byte(e)...)
+		b = append(b, e.serialize()...)
 	}
 	b = append(b, 0)
 	return b, nil
@@ -74,20 +94,10 @@ func serializeUint32(i uint32) []byte {
 	return b
 }
 
-func serializeAnswer(r []*record) []byte {
-	var b []byte
-	b = append(b, []byte(r[0].Name)...)
-
-	rt := serializeUint16(uint16(r[0].Type))
-	b = append(b, rt...)
-
-	rc := serializeUint16(uint16(r[0].Class))
-	b = append(b, rc...)
-
-	rttl := serializeUint32(uint32(r[0].TTL))
-	b = append(b, rttl...)
-
-	b = append(b, []byte(r[0].RData)...)
+func serializeAnswer(r []*record) (b []byte) {
+	for _, e := range r {
+		b = append(b, e.serialize()...)
+	}
 	return b
 }
 

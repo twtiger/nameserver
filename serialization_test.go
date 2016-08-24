@@ -139,6 +139,16 @@ func (s *SerializationSuite) Test_serializeLabels_returnsByteArrayForSingleLabel
 	c.Assert(b, DeepEquals, exp)
 }
 
+func (s *SerializationSuite) Test_serialize_onLabel_returnsByteArray(c *C) {
+	l := label("www")
+
+	exp := []byte{3, byte('w'), byte('w'), byte('w')}
+
+	b := l.serialize()
+
+	c.Assert(b, DeepEquals, exp)
+}
+
 func (s *SerializationSuite) Test_serializeLabels_returnsByteArrayForMultipleLabels(c *C) {
 	labels := []label{label("www"), label("thoughtworks"), label("com")}
 
@@ -185,8 +195,30 @@ func (s *SerializationSuite) Test_serializeQuery_returnsByteArrayForMessageQuery
 	c.Assert(b, DeepEquals, exp)
 }
 
-func (s *SerializationSuite) Test_serializeAnswer_returnsByteArrayForSingleRecord(c *C) {
+func (s *SerializationSuite) Test_serialize_forRecord_returnsByteArrayForSingleRecord(c *C) {
+	record := &record{
+		Name:  "twtiger.com.",
+		Type:  1,
+		Class: 1,
+		TTL:   1,
+		RData: "123.123.7.8",
+	}
+
+	exp := createBytesForAnswer()
+
+	b := record.serialize()
+	c.Assert(b, DeepEquals, exp)
+}
+
+func (s *SerializationSuite) Test_serializeAnswer_returnsByteArrayForMultipleRecords(c *C) {
 	records := []*record{
+		&record{
+			Name:  "twtiger.com.",
+			Type:  1,
+			Class: 1,
+			TTL:   1,
+			RData: "123.123.7.8",
+		},
 		&record{
 			Name:  "twtiger.com.",
 			Type:  1,
@@ -197,6 +229,7 @@ func (s *SerializationSuite) Test_serializeAnswer_returnsByteArrayForSingleRecor
 	}
 
 	exp := createBytesForAnswer()
+	exp = append(exp, createBytesForAnswer()...)
 
 	b := serializeAnswer(records)
 	c.Assert(b, DeepEquals, exp)
