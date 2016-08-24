@@ -11,30 +11,24 @@ func createBytesForHeaders() []byte {
 }
 
 func createBytesForLabels() []byte {
-	exp := []byte{3}
-	exp = append(exp, []byte("www")...)
-	exp = append(exp, 12)
-	exp = append(exp, []byte("thoughtworks")...)
-	exp = append(exp, 3)
-	exp = append(exp, []byte("com")...)
-	exp = append(exp, 0)
-
-	return exp
+	i := [][]byte{[]byte{3}, []byte("www"), []byte{12}, []byte("thoughtworks"), []byte{3}, []byte("com"), []byte{0}}
+	return flattenBytes(i)
 }
 
 func createBytesForUint16() []byte {
 	return []byte{0, 1}
 }
 
-func createBytesForAnswer() []byte {
-	var b []byte
-	b = append(b, []byte("twtiger.com.")...)
-	b = append(b, []byte{0, 1}...)
-	b = append(b, []byte{0, 1}...)
-	b = append(b, []byte{0, 0, 0, 1}...)
-	b = append(b, []byte("123.123.7.8")...)
-
+func flattenBytes(i [][]byte) (b []byte) {
+	for _, e := range i {
+		b = append(b, e...)
+	}
 	return b
+}
+
+func createBytesForAnswer() []byte {
+	inputs := [][]byte{[]byte("twtiger.com."), []byte{0, 1}, []byte{0, 1}, []byte{0, 0, 0, 1}, []byte("123.123.7.8")}
+	return flattenBytes(inputs)
 }
 
 func (s *SerializationSuite) Test_extractHeaders_returnsSliceWithoutHeaders(c *C) {
@@ -69,7 +63,8 @@ func (s *SerializationSuite) Test_extractLabels_returnsRemainingBytes(c *C) {
 }
 
 func (s *SerializationSuite) Test_extractLabels_canParseMoreThanOneLabel(c *C) {
-	b := createBytesForLabels()
+	i := [][]byte{[]byte{3}, []byte("www"), []byte{12}, []byte("thoughtworks"), []byte{3}, []byte("com"), []byte{0}}
+	b := flattenBytes(i)
 
 	labels, _, err := extractLabels(b)
 
@@ -152,7 +147,8 @@ func (s *SerializationSuite) Test_serialize_onLabel_returnsByteArray(c *C) {
 func (s *SerializationSuite) Test_serializeLabels_returnsByteArrayForMultipleLabels(c *C) {
 	labels := []label{label("www"), label("thoughtworks"), label("com")}
 
-	exp := createBytesForLabels()
+	i := [][]byte{createBytesForLabels()}
+	exp := flattenBytes(i)
 
 	b, err := serializeLabels(labels)
 
@@ -181,9 +177,9 @@ func (s *SerializationSuite) Test_serializeUint32_returnsByteArray(c *C) {
 }
 
 func (s *SerializationSuite) Test_serializeQuery_returnsByteArrayForMessageQuery(c *C) {
-	exp := createBytesForLabels()
-	exp = append(exp, createBytesForUint16()...)
-	exp = append(exp, createBytesForUint16()...)
+	i := [][]byte{createBytesForLabels(), createBytesForUint16(), createBytesForUint16()}
+
+	exp := flattenBytes(i)
 
 	q := &query{
 		qname:  []label{label("www"), label("thoughtworks"), label("com")},
@@ -241,10 +237,8 @@ func (s *SerializationSuite) Test_serializeHeaders_returnsByteArrayofLength12(c 
 }
 
 func (s *SerializationSuite) Test_serialize_returnsByteArrayForMessageWithQuery(c *C) {
-	exp := serializeHeaders()
-	exp = append(exp, createBytesForLabels()...)
-	exp = append(exp, createBytesForUint16()...)
-	exp = append(exp, createBytesForUint16()...)
+	i := [][]byte{createBytesForHeaders(), createBytesForLabels(), createBytesForUint16(), createBytesForUint16()}
+	exp := flattenBytes(i)
 
 	m := &message{
 		query: &query{
@@ -260,11 +254,8 @@ func (s *SerializationSuite) Test_serialize_returnsByteArrayForMessageWithQuery(
 }
 
 func (s *SerializationSuite) Test_serialize_returnsByteArrayForMessageWithResponse(c *C) {
-	exp := serializeHeaders()
-	exp = append(exp, createBytesForLabels()...)
-	exp = append(exp, createBytesForUint16()...)
-	exp = append(exp, createBytesForUint16()...)
-	exp = append(exp, createBytesForAnswer()...)
+	i := [][]byte{createBytesForHeaders(), createBytesForLabels(), createBytesForUint16(), createBytesForUint16(), createBytesForAnswer()}
+	exp := flattenBytes(i)
 
 	m := &message{
 		query: &query{
