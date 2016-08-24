@@ -26,6 +26,17 @@ func createBytesForUint16() []byte {
 	return []byte{0, 1}
 }
 
+func createBytesForAnswer() []byte {
+	var b []byte
+	b = append(b, []byte("twtiger.com.")...)
+	b = append(b, []byte{0, 1}...)
+	b = append(b, []byte{0, 1}...)
+	b = append(b, []byte{0, 0, 0, 1}...)
+	b = append(b, []byte("123.123.7.8")...)
+
+	return b
+}
+
 func (s *SerializationSuite) Test_extractHeaders_returnsSliceWithoutHeaders(c *C) {
 	b := []byte{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2}
 	rem, _ := extractHeaders(b)
@@ -185,12 +196,7 @@ func (s *SerializationSuite) Test_serializeAnswer_returnsByteArrayForSingleRecor
 		},
 	}
 
-	var exp []byte
-	exp = append(exp, []byte(records[0].Name)...)
-	exp = append(exp, []byte{0, 1}...)
-	exp = append(exp, []byte{0, 1}...)
-	exp = append(exp, []byte{0, 0, 0, 1}...)
-	exp = append(exp, []byte(records[0].RData)...)
+	exp := createBytesForAnswer()
 
 	b := serializeAnswer(records)
 	c.Assert(b, DeepEquals, exp)
@@ -212,6 +218,35 @@ func (s *SerializationSuite) Test_serialize_returnsByteArrayForMessageWithQuery(
 			qname:  []label{label("www"), label("thoughtworks"), label("com")},
 			qtype:  qtypeA,
 			qclass: qclassIN,
+		},
+	}
+
+	b, err := m.serialize()
+	c.Assert(err, IsNil)
+	c.Assert(b, DeepEquals, exp)
+}
+
+func (s *SerializationSuite) Test_serialize_returnsByteArrayForMessageWithResponse(c *C) {
+	exp := serializeHeaders()
+	exp = append(exp, createBytesForLabels()...)
+	exp = append(exp, createBytesForUint16()...)
+	exp = append(exp, createBytesForUint16()...)
+	exp = append(exp, createBytesForAnswer()...)
+
+	m := &message{
+		query: &query{
+			qname:  []label{label("www"), label("thoughtworks"), label("com")},
+			qtype:  qtypeA,
+			qclass: qclassIN,
+		},
+		answers: []*record{
+			&record{
+				Name:  "twtiger.com.",
+				Type:  1,
+				Class: 1,
+				TTL:   1,
+				RData: "123.123.7.8",
+			},
 		},
 	}
 

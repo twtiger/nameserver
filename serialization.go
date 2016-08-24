@@ -26,7 +26,12 @@ func (m *message) serialize() ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	b := append(h, q...)
+	if len(m.answers) != 0 {
+		a := serializeAnswer(m.answers)
+		b = append(b, a...)
+	}
 
 	return b, nil
 }
