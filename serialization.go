@@ -22,12 +22,24 @@ func (m *message) deserialize(b []byte) error {
 
 func (m *message) serialize() ([]byte, error) {
 	h := serializeHeaders()
-	l, err := serializeLabels(m.query.qname)
+	q, err := serializeQuery(m.query)
 	if err != nil {
 		return nil, err
 	}
-	b := append(h, l...)
+	b := append(h, q...)
 
+	return b, nil
+}
+
+func serializeQuery(q *query) ([]byte, error) {
+	l, err := serializeLabels(q.qname)
+	if err != nil {
+		return nil, err
+	}
+	qt := serializeUint16(uint16(q.qtype))
+	qc := serializeUint16(uint16(q.qclass))
+
+	b := append(l, append(qt, qc...)...)
 	return b, nil
 }
 
@@ -43,6 +55,12 @@ func serializeLabels(l []label) ([]byte, error) {
 	}
 	b = append(b, 0)
 	return b, nil
+}
+
+func serializeUint16(i uint16) []byte {
+	b := make([]byte, 2)
+	binary.BigEndian.PutUint16(b, i)
+	return b
 }
 
 func serializeAnswer(r []*record) []byte {

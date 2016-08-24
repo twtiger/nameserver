@@ -105,6 +105,29 @@ func (s *SerializationSuite) Test_serializeLabels_returnsByteArrayForSingleLabel
 	c.Assert(b, DeepEquals, exp)
 }
 
+func (s *SerializationSuite) Test_serializeUint16_returnsByteArray(c *C) {
+	exp := []byte{0, 1}
+	b := serializeUint16(uint16(qtypeA))
+	c.Assert(b, DeepEquals, exp)
+}
+
+func (s *SerializationSuite) Test_serializeQuery_returnsByteArrayForMessageQuery(c *C) {
+	exp := []byte{3}
+	exp = append(exp, []byte("www")...)
+	exp = append(exp, 0)
+	exp = append(exp, []byte{0, 1}...)
+	exp = append(exp, []byte{0, 1}...)
+
+	q := &query{
+		qname:  []label{label("www")},
+		qtype:  qtypeA,
+		qclass: qclassIN,
+	}
+
+	b, _ := serializeQuery(q)
+	c.Assert(b, DeepEquals, exp)
+}
+
 func (s *SerializationSuite) Test_serializeLabels_returnsByteArrayForMultipleLabels(c *C) {
 	labels := []label{label("www"), label("thoughtworks"), label("com")}
 
@@ -156,7 +179,7 @@ func (s *SerializationSuite) Test_serializeHeaders_returnsByteArrayofLength12(c 
 	c.Assert(len(b), Equals, 12)
 }
 
-func (s *SerializationSuite) Test_serialize_returnsByteArrayForMessage(c *C) {
+func (s *SerializationSuite) Test_serialize_returnsByteArrayForMessageWithQuery(c *C) {
 	exp := make([]byte, 12)
 	exp = append(exp, 3)
 	exp = append(exp, []byte("www")...)
@@ -165,10 +188,14 @@ func (s *SerializationSuite) Test_serialize_returnsByteArrayForMessage(c *C) {
 	exp = append(exp, 3)
 	exp = append(exp, []byte("com")...)
 	exp = append(exp, 0)
+	exp = append(exp, []byte{0, 1}...)
+	exp = append(exp, []byte{0, 1}...)
 
 	m := &message{
 		query: &query{
-			qname: []label{label("www"), label("thoughtworks"), label("com")},
+			qname:  []label{label("www"), label("thoughtworks"), label("com")},
+			qtype:  qtypeA,
+			qclass: qclassIN,
 		},
 	}
 
