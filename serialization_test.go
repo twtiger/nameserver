@@ -6,6 +6,26 @@ type SerializationSuite struct{}
 
 var _ = Suite(&SerializationSuite{})
 
+func createBytesForHeaders() []byte {
+	return []byte{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
+}
+
+func createBytesForLabels() []byte {
+	exp := []byte{3}
+	exp = append(exp, []byte("www")...)
+	exp = append(exp, 12)
+	exp = append(exp, []byte("thoughtworks")...)
+	exp = append(exp, 3)
+	exp = append(exp, []byte("com")...)
+	exp = append(exp, 0)
+
+	return exp
+}
+
+func createBytesForUint16() []byte {
+	return []byte{0, 1}
+}
+
 func (s *SerializationSuite) Test_extractHeaders_returnsSliceWithoutHeaders(c *C) {
 	b := []byte{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2}
 	rem, _ := extractHeaders(b)
@@ -38,13 +58,7 @@ func (s *SerializationSuite) Test_extractLabels_returnsRemainingBytes(c *C) {
 }
 
 func (s *SerializationSuite) Test_extractLabels_canParseMoreThanOneLabel(c *C) {
-	b := []byte{3}
-	b = append(b, []byte("www")...)
-	b = append(b, 12)
-	b = append(b, []byte("thoughtworks")...)
-	b = append(b, 3)
-	b = append(b, []byte("com")...)
-	b = append(b, []byte{0, 0, 1, 3, 4}...)
+	b := createBytesForLabels()
 
 	labels, _, err := extractLabels(b)
 
@@ -63,17 +77,28 @@ func (s *SerializationSuite) Test_extractLabels_forEmptyQuestionReturnsError(c *
 }
 
 func (s *SerializationSuite) Test_deserialize_returnsMessageWithQuery(c *C) {
-	b := make([]byte, 12)
+	b := createBytesForHeaders()
 	b = append(b, 3)
 	b = append(b, []byte("www")...)
 	b = append(b, 0)
-	b = append(b, []byte{0, 0, 1, 3, 4}...)
 
 	msg := &message{}
 	err := msg.deserialize(b)
 
 	c.Assert(err, IsNil)
 	c.Assert(msg.query.qname[0], Equals, label("www"))
+}
+
+func (s *SerializationSuite) Test_deserialize_returnsOneLabelForSingleQueryAndStopsParsingAfterNullLabel(c *C) {
+	b := createBytesForHeaders()
+	b = append(b, []byte{3, byte('w'), byte('w'), byte('w'), 0}...)
+	b = append(b, []byte{0, 0, 1, 3, 4}...)
+
+	msg := &message{}
+	err := msg.deserialize(b)
+
+	c.Assert(err, IsNil)
+	c.Assert(len(msg.query.qname), Equals, 1)
 }
 
 func (s *SerializationSuite) Test_deserialize_returnsErrorIfHeadersAreInvalid(c *C) {
@@ -95,9 +120,7 @@ func (s *SerializationSuite) Test_deserialize_returnsErrorQueryIsInvalid(c *C) {
 func (s *SerializationSuite) Test_serializeLabels_returnsByteArrayForSingleLabel(c *C) {
 	labels := []label{label("www")}
 
-	exp := []byte{3}
-	exp = append(exp, []byte("www")...)
-	exp = append(exp, 0)
+	exp := []byte{3, byte('w'), byte('w'), byte('w'), 0}
 
 	b, err := serializeLabels(labels)
 
@@ -108,13 +131,7 @@ func (s *SerializationSuite) Test_serializeLabels_returnsByteArrayForSingleLabel
 func (s *SerializationSuite) Test_serializeLabels_returnsByteArrayForMultipleLabels(c *C) {
 	labels := []label{label("www"), label("thoughtworks"), label("com")}
 
-	exp := []byte{3}
-	exp = append(exp, []byte("www")...)
-	exp = append(exp, 12)
-	exp = append(exp, []byte("thoughtworks")...)
-	exp = append(exp, 3)
-	exp = append(exp, []byte("com")...)
-	exp = append(exp, 0)
+	exp := createBytesForLabels()
 
 	b, err := serializeLabels(labels)
 
@@ -143,14 +160,12 @@ func (s *SerializationSuite) Test_serializeUint32_returnsByteArray(c *C) {
 }
 
 func (s *SerializationSuite) Test_serializeQuery_returnsByteArrayForMessageQuery(c *C) {
-	exp := []byte{3}
-	exp = append(exp, []byte("www")...)
-	exp = append(exp, 0)
-	exp = append(exp, []byte{0, 1}...)
-	exp = append(exp, []byte{0, 1}...)
+	exp := createBytesForLabels()
+	exp = append(exp, createBytesForUint16()...)
+	exp = append(exp, createBytesForUint16()...)
 
 	q := &query{
-		qname:  []label{label("www")},
+		qname:  []label{label("www"), label("thoughtworks"), label("com")},
 		qtype:  qtypeA,
 		qclass: qclassIN,
 	}
@@ -187,16 +202,10 @@ func (s *SerializationSuite) Test_serializeHeaders_returnsByteArrayofLength12(c 
 }
 
 func (s *SerializationSuite) Test_serialize_returnsByteArrayForMessageWithQuery(c *C) {
-	exp := make([]byte, 12)
-	exp = append(exp, 3)
-	exp = append(exp, []byte("www")...)
-	exp = append(exp, 12)
-	exp = append(exp, []byte("thoughtworks")...)
-	exp = append(exp, 3)
-	exp = append(exp, []byte("com")...)
-	exp = append(exp, 0)
-	exp = append(exp, []byte{0, 1}...)
-	exp = append(exp, []byte{0, 1}...)
+	exp := serializeHeaders()
+	exp = append(exp, createBytesForLabels()...)
+	exp = append(exp, createBytesForUint16()...)
+	exp = append(exp, createBytesForUint16()...)
 
 	m := &message{
 		query: &query{
