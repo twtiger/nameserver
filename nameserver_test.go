@@ -67,7 +67,9 @@ func (s *NameserverSuite) TestCannotUseServeWithoutConnecting(c *C) {
 }
 
 //TODO: Saving this functional test
-// func (s *NameserverSuite) TestResolve(c *C) {
+// func (s *NameserverSuite) Test_ReceivesValidResponseForAuthZoneAddress(c *C) {
+// const authZoneAddr := "twtiger.com"
+
 // 	ns = localServer(true)
 // 	ns.Connect()
 // 	go ns.Serve()
@@ -76,7 +78,7 @@ func (s *NameserverSuite) TestCannotUseServeWithoutConnecting(c *C) {
 // 	r := dnsr.New(serv)
 // 	r.Servers[0] = "127.0.0.1:8899"
 
-// 	ips, err := r.LookupHost("twtiger.com")
+// 	ips, err := r.LookupHost(authZoneAddr)
 
 // 	c.Assert(err, IsNil)
 // 	c.Assert(ips, HasLen, 2)
@@ -109,21 +111,22 @@ func (s *NameserverSuite) TestThatServerIsReplyingOnListeningPort(c *C) {
 	c.Assert(errRead, IsNil)
 }
 
-func createRecordNameInBytesForTwtiger() []byte {
-	recordName := []byte{7}
-	recordName = append(recordName, []byte("twtiger")...)
-	recordName = append(recordName, 3)
-	recordName = append(recordName, []byte("com")...)
+func recordNameForSecondLevelDomain(firstLevelDom string, secondLevelDom string) []byte {
+	lenfirstLevelDom := byte(len(firstLevelDom))
+	lenSecondLevelDom := byte(len(secondLevelDom))
+
+	recordName := []byte{lenfirstLevelDom}
+	recordName = append(recordName, []byte(firstLevelDom)...)
+	recordName = append(recordName, lenSecondLevelDom)
+	recordName = append(recordName, []byte(secondLevelDom)...)
 	recordName = append(recordName, 0)
 	return recordName
 }
 
 func (s *NameserverSuite) Test_CreationOfSerializedResponseFromQuery(c *C) {
 	header := make([]byte, 12)
-	recordName := createRecordNameInBytesForTwtiger()
-
-	message := header
-	message = append(message, recordName...)
+	recordName := recordNameForSecondLevelDomain("twtiger", "com")
+	message := append(header, recordName...)
 
 	response := respondTo(message)
 
@@ -147,3 +150,42 @@ func (s *NameserverSuite) Test_CreationOfSerializedResponseFromQuery(c *C) {
 	// c.Assert(response[48], DeepEquals, recordRDLength)
 	// c.Assert(response[49:50], DeepEquals, recordRData)
 }
+
+// TODO waiting for serialize to be completed
+// var resBchan = make(chan []byte)
+// var resReturnAddrChan = make(chan *net.UDPAddr)
+// var resErrChan = make(chan error)
+
+// func setupResolver(setupAddr *net.UDPAddr, bmsg []byte, sendTo *net.UDPAddr) {
+// 	listener, _ := net.ListenUDP("udp", setupAddr)
+// 	go func() {
+// 		listener.WriteTo(bmsg, sendTo)
+// 		b := make([]byte, 512)
+// 		_, ra, err := listener.ReadFromUDP(b)
+// 		defer listener.Close()
+
+// 		resBchan <- b
+// 		resReturnAddrChan <- ra
+// 		resErrChan <- err
+// 	}()
+// }
+
+// func (s *NameserverSuite) Test_ReceivesValidResponseForExtZoneAddress(c *C) {
+// 	recordName := recordNameForSecondLevelDomain("wireshark", "org")
+// 	message := append(make([]byte, 12), recordName...)
+
+// 	ns = localServer(true)
+// 	ns.Connect()
+// 	go ns.Serve()
+
+// 	const resolverPort = 8866
+// 	setupResolver(localhost(resolverPort), message, localhost(nsPort))
+
+// 	respToRes := <-resBchan
+// 	respRetAddr := <-resReturnAddrChan
+// 	respErr := <-resErrChan
+// 	c.Assert(respToRes, DeepEquals, message)
+// 	c.Assert(respRetAddr.IP.String(), Equals, "127.0.0.1")
+// 	c.Assert(respRetAddr.Port, Equals, nsPort)
+// 	c.Assert(respErr, IsNil)
+// }
