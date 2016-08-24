@@ -63,21 +63,24 @@ func serializeUint16(i uint16) []byte {
 	return b
 }
 
+func serializeUint32(i uint32) []byte {
+	b := make([]byte, 4)
+	binary.BigEndian.PutUint32(b, i)
+	return b
+}
+
 func serializeAnswer(r []*record) []byte {
 	var b []byte
 	b = append(b, []byte(r[0].Name)...)
 
-	j := make([]byte, 2)
-	binary.BigEndian.PutUint16(j, uint16(r[0].Type))
-	b = append(b, j...)
+	rt := serializeUint16(uint16(r[0].Type))
+	b = append(b, rt...)
 
-	k := make([]byte, 2)
-	binary.BigEndian.PutUint16(k, uint16(r[0].Class))
-	b = append(b, k...)
+	rc := serializeUint16(uint16(r[0].Class))
+	b = append(b, rc...)
 
-	l := make([]byte, 4)
-	binary.BigEndian.PutUint32(l, uint32(r[0].TTL))
-	b = append(b, l...)
+	rttl := serializeUint32(uint32(r[0].TTL))
+	b = append(b, rttl...)
 
 	b = append(b, []byte(r[0].RData)...)
 	return b
