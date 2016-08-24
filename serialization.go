@@ -21,19 +21,12 @@ func (m *message) deserialize(b []byte) error {
 }
 
 func (m *message) serialize() ([]byte, error) {
-	h := serializeHeaders()
 	q, err := m.query.serialize()
 	if err != nil {
 		return nil, err
 	}
 
-	b := append(h, q...)
-	if len(m.answers) != 0 {
-		a := serializeAnswer(m.answers)
-		b = append(b, a...)
-	}
-
-	return b, nil
+	return append(serializeHeaders(), append(q, serializeAnswer(m.answers)...)...), nil
 }
 
 func (q *query) serialize() ([]byte, error) {

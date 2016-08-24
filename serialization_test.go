@@ -231,6 +231,15 @@ func (s *SerializationSuite) Test_serializeAnswer_returnsByteArrayForMultipleRec
 	c.Assert(b, DeepEquals, exp)
 }
 
+func (s *SerializationSuite) Test_serializeAnswer_returnsEmptyByteArrayForNoAnswers(c *C) {
+	records := []*record{}
+
+	var exp []byte
+
+	b := serializeAnswer(records)
+	c.Assert(b, DeepEquals, exp)
+}
+
 func (s *SerializationSuite) Test_serializeHeaders_returnsByteArrayofLength12(c *C) {
 	b := serializeHeaders()
 	c.Assert(len(b), Equals, 12)
