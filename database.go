@@ -1,7 +1,7 @@
 package nameserver
 
 var tigerRecord1 = &record{
-	Name:  "twtiger.com.",
+	Name:  []label{"twtiger", "com"},
 	Type:  qtypeA,
 	Class: qclassIN,
 	TTL:   oneHour,
@@ -9,7 +9,7 @@ var tigerRecord1 = &record{
 }
 
 var tigerRecord2 = &record{
-	Name:  "twtiger.com.",
+	Name:  []label{"twtiger", "com"},
 	Type:  qtypeA,
 	Class: qclassIN,
 	TTL:   oneHour,

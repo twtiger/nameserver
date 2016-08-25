@@ -24,7 +24,8 @@ func (q *query) serialize() ([]byte, error) {
 }
 
 func (r *record) serialize() (b []byte) {
-	b = append(b, []byte(r.Name)...)
+	l, _ := serializeLabels(r.Name)
+	b = append(b, l...)
 
 	b = append(b, serializeUint16(uint16(r.Type))...)
 

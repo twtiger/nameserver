@@ -41,7 +41,7 @@ func (s *MessageSuite) Test_ResponseForAuthoritativeZoneQuery(c *C) {
 	c.Assert(len(r.answers), Equals, 2)
 	c.Assert(r.answers[0], DeepEquals,
 		&record{
-			Name:  "twtiger.com.",
+			Name:  []label{"twtiger", "com"},
 			Type:  qtypeA,
 			Class: qclassIN,
 			TTL:   oneHour,
@@ -49,7 +49,7 @@ func (s *MessageSuite) Test_ResponseForAuthoritativeZoneQuery(c *C) {
 		})
 	c.Assert(r.answers[1], DeepEquals,
 		&record{
-			Name:  "twtiger.com.",
+			Name:  []label{"twtiger", "com"},
 			Type:  qtypeA,
 			Class: qclassIN,
 			TTL:   oneHour,

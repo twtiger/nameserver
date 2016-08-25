@@ -14,7 +14,7 @@ func (s *DatabaseSuite) Test_RetrievalOfTwoARecordsForOurAuthoritativeDomain(c *
 	c.Assert(len(records), Equals, 2)
 	c.Assert(records[0], DeepEquals,
 		&record{
-			Name:  "twtiger.com.",
+			Name:  []label{"twtiger", "com"},
 			Type:  qtypeA,
 			Class: qclassIN,
 			TTL:   oneHour,
@@ -22,7 +22,7 @@ func (s *DatabaseSuite) Test_RetrievalOfTwoARecordsForOurAuthoritativeDomain(c *
 		})
 	c.Assert(records[1], DeepEquals,
 		&record{
-			Name:  "twtiger.com.",
+			Name:  []label{"twtiger", "com"},
 			Type:  qtypeA,
 			Class: qclassIN,
 			TTL:   oneHour,

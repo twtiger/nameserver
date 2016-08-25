@@ -9,7 +9,7 @@ type query struct {
 }
 
 type record struct {
-	Name     string
+	Name     []label
 	Type     qType
 	Class    qClass
 	TTL      uint32

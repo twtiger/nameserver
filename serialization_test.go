@@ -7,7 +7,7 @@ type SerializationSuite struct{}
 var _ = Suite(&SerializationSuite{})
 
 func createBytesForAnswer() []byte {
-	return flattenBytes([]byte("twtiger.com."), []byte{0, 1}, []byte{0, 1}, []byte{0, 0, 0, 1}, []byte("123.123.7.8"))
+	return flattenBytes([]byte{7}, []byte("twtiger"), []byte{3}, []byte("com"), []byte{0}, []byte{0, 1}, []byte{0, 1}, []byte{0, 0, 0, 1}, []byte("123.123.7.8"))
 }
 
 func (s *SerializationSuite) Test_serializeLabels_returnsByteArrayForSingleLabel(c *C) {
@@ -77,7 +77,7 @@ func (s *SerializationSuite) Test_serializeQuery_returnsByteArrayForMessageQuery
 
 func (s *SerializationSuite) Test_serialize_forRecord_returnsByteArrayForSingleRecord(c *C) {
 	record := &record{
-		Name:  "twtiger.com.",
+		Name:  []label{"twtiger", "com"},
 		Type:  1,
 		Class: 1,
 		TTL:   1,
@@ -93,14 +93,14 @@ func (s *SerializationSuite) Test_serialize_forRecord_returnsByteArrayForSingleR
 func (s *SerializationSuite) Test_serializeAnswer_returnsByteArrayForMultipleRecords(c *C) {
 	records := []*record{
 		&record{
-			Name:  "twtiger.com.",
+			Name:  []label{"twtiger", "com"},
 			Type:  1,
 			Class: 1,
 			TTL:   1,
 			RData: "123.123.7.8",
 		},
 		&record{
-			Name:  "twtiger.com.",
+			Name:  []label{"twtiger", "com"},
 			Type:  1,
 			Class: 1,
 			TTL:   1,
@@ -156,7 +156,7 @@ func (s *SerializationSuite) Test_serialize_returnsByteArrayForMessageWithRespon
 		},
 		answers: []*record{
 			&record{
-				Name:  "twtiger.com.",
+				Name:  []label{"twtiger", "com"},
 				Type:  1,
 				Class: 1,
 				TTL:   1,
