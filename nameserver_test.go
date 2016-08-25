@@ -1,7 +1,6 @@
 package nameserver
 
 import (
-	"encoding/binary"
 	"net"
 	"testing"
 
@@ -112,35 +111,12 @@ func (s *NameserverSuite) TestThatServerIsReplyingOnListeningPort(c *C) {
 	c.Assert(errRead, IsNil)
 }
 
-// func recordNameForSecondLevelDomain(firstLevelDom string, secondLevelDom string) []byte {
-// 	lenfirstLevelDom := byte(len(firstLevelDom))
-// 	lenSecondLevelDom := byte(len(secondLevelDom))
-
-// 	recordName := []byte{lenfirstLevelDom}
-// 	recordName = append(recordName, []byte(firstLevelDom)...)
-// 	recordName = append(recordName, lenSecondLevelDom)
-// 	recordName = append(recordName, []byte(secondLevelDom)...)
-// 	recordName = append(recordName, 0)
-// 	return recordName
-// }
-
-func qtypeAndQclass() (qtype []byte, qclass []byte) {
-	b := make([]byte, 2) // TODO pull into a test helper file
-	binary.BigEndian.PutUint16(b, uint16(qtypeA))
-	qtype = append(qtype, b...)
-	b = make([]byte, 2)
-	binary.BigEndian.PutUint16(b, uint16(qclassIN))
-	qclass = append(qclass, b...)
-	return
-}
-
 func (s *NameserverSuite) Test_CreationOfSerializedResponseFromQuery(c *C) {
 	header := make([]byte, 12)
 	recordName := createBytesForLabels("twtiger", "com")
-	message := append(header, recordName...)
-	qtype, qclass := qtypeAndQclass()
-	message = append(message, qtype...)
-	message = append(message, qclass...)
+	qtype := []byte{0, 1}
+	qclass := []byte{0, 1}
+	message := flattenBytes(header, recordName, qtype, qclass)
 
 	response := respondTo(message)
 
