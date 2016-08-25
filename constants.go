@@ -13,3 +13,5 @@ const (
 )
 
 const oneHour = 3600
+
+const headerLength = 12
