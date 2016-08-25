@@ -114,14 +114,12 @@ func (s *NameserverSuite) TestThatServerIsReplyingOnListeningPort(c *C) {
 func (s *NameserverSuite) Test_CreationOfSerializedResponseFromQuery(c *C) {
 	header := make([]byte, 12)
 	recordName := createBytesForLabels("twtiger", "com")
-	qtype := []byte{0, 1}
-	qclass := []byte{0, 1}
-	message := flattenBytes(header, recordName, qtype, qclass)
+	message := flattenBytes(header, recordName, oneInTwoBytes(), oneInTwoBytes())
 
 	response := respondTo(message)
 
 	c.Assert(response[0:12], DeepEquals, header)
-	c.Assert(response[12:25], DeepEquals, recordName) //qname
+	c.Assert(response[12:25], DeepEquals, recordName)
 
 	//recordType := []byte{0, 1}
 	//recordClass := []byte{0, 1}

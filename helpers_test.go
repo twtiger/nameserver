@@ -1,8 +1,21 @@
 package nameserver
 
-func flattenBytes(i ...[]byte) (b []byte) {
+import "fmt"
+
+func flattenBytes(i ...interface{}) (b []byte) {
 	for _, e := range i {
-		b = append(b, e...)
+		switch k := e.(type) {
+		case string:
+			b = append(b, []byte(k)...)
+		case int:
+			b = append(b, byte(k))
+		case byte:
+			b = append(b, k)
+		case []byte:
+			b = append(b, k...)
+		default:
+			panic(fmt.Sprintf("cannot flatten: %#v", e))
+		}
 	}
 	return b
 }
@@ -17,7 +30,7 @@ func oneInTwoBytes() []byte {
 
 func createBytesForLabels(s ...string) (b []byte) {
 	for _, e := range s {
-		b = append(b, append([]byte{byte(len(e))}, []byte(e)...)...)
+		b = flattenBytes(b, len(e), e)
 	}
 	b = append(b, 0)
 	return

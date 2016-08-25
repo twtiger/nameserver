@@ -58,7 +58,7 @@ func (s *DeserializationSuite) Test_extractLabels_forEmptyQuestionReturnsError(c
 }
 
 func (s *DeserializationSuite) Test_deserialize_returnsMessageWithQuery(c *C) {
-	b := flattenBytes(createBytesForHeaders(), []byte{3}, []byte("www"), []byte{0}, oneInTwoBytes(), oneInTwoBytes())
+	b := flattenBytes(createBytesForHeaders(), 3, "www", 0, oneInTwoBytes(), oneInTwoBytes())
 
 	msg := &message{}
 	err := msg.deserialize(b)
@@ -70,7 +70,7 @@ func (s *DeserializationSuite) Test_deserialize_returnsMessageWithQuery(c *C) {
 }
 
 func (s *DeserializationSuite) Test_deserialize_onQuery_returnsQuery(c *C) {
-	b := flattenBytes([]byte{3}, []byte("www"), []byte{0}, oneInTwoBytes(), oneInTwoBytes())
+	b := flattenBytes(3, "www", 0, oneInTwoBytes(), oneInTwoBytes())
 
 	q := &query{}
 	err := q.deserialize(b)
@@ -82,7 +82,7 @@ func (s *DeserializationSuite) Test_deserialize_onQuery_returnsQuery(c *C) {
 }
 
 func (s *DeserializationSuite) Test_deserialize_returnsOneLabelForSingleQueryAndStopsParsingAfterNullLabel(c *C) {
-	b := flattenBytes(createBytesForHeaders(), []byte{3}, []byte("www"), []byte{0}, oneInTwoBytes(), oneInTwoBytes(), []byte{1, 2, 3})
+	b := flattenBytes(createBytesForHeaders(), 3, "www", 0, oneInTwoBytes(), oneInTwoBytes(), 1, 2, 3)
 
 	msg := &message{}
 	err := msg.deserialize(b)
