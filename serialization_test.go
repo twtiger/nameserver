@@ -6,24 +6,9 @@ type SerializationSuite struct{}
 
 var _ = Suite(&SerializationSuite{})
 
-func createBytesForHeaders() []byte {
-	return []byte{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
-}
-
 func createBytesForLabels() []byte {
 	i := [][]byte{[]byte{3}, []byte("www"), []byte{12}, []byte("thoughtworks"), []byte{3}, []byte("com"), []byte{0}}
 	return flattenBytes(i)
-}
-
-func createBytesForUint16() []byte {
-	return []byte{0, 1}
-}
-
-func flattenBytes(i [][]byte) (b []byte) {
-	for _, e := range i {
-		b = append(b, e...)
-	}
-	return b
 }
 
 func createBytesForAnswer() []byte {
@@ -85,7 +70,7 @@ func (s *SerializationSuite) Test_serializeUint32_returnsByteArray(c *C) {
 }
 
 func (s *SerializationSuite) Test_serializeQuery_returnsByteArrayForMessageQuery(c *C) {
-	i := [][]byte{createBytesForLabels(), createBytesForUint16(), createBytesForUint16()}
+	i := [][]byte{createBytesForLabels(), oneInTwoBytes(), oneInTwoBytes()}
 
 	exp := flattenBytes(i)
 
@@ -154,7 +139,7 @@ func (s *SerializationSuite) Test_serializeHeaders_returnsByteArrayofLength12(c 
 }
 
 func (s *SerializationSuite) Test_serialize_returnsByteArrayForMessageWithQuery(c *C) {
-	i := [][]byte{createBytesForHeaders(), createBytesForLabels(), createBytesForUint16(), createBytesForUint16()}
+	i := [][]byte{createBytesForHeaders(), createBytesForLabels(), oneInTwoBytes(), oneInTwoBytes()}
 	exp := flattenBytes(i)
 
 	m := &message{
@@ -171,7 +156,7 @@ func (s *SerializationSuite) Test_serialize_returnsByteArrayForMessageWithQuery(
 }
 
 func (s *SerializationSuite) Test_serialize_returnsByteArrayForMessageWithResponse(c *C) {
-	i := [][]byte{createBytesForHeaders(), createBytesForLabels(), createBytesForUint16(), createBytesForUint16(), createBytesForAnswer()}
+	i := [][]byte{createBytesForHeaders(), createBytesForLabels(), oneInTwoBytes(), oneInTwoBytes(), createBytesForAnswer()}
 	exp := flattenBytes(i)
 
 	m := &message{

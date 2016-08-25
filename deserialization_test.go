@@ -8,8 +8,8 @@ var _ = Suite(&DeserializationSuite{})
 
 func (s *DeserializationSuite) Test_extractHeaders_returnsSliceWithoutHeaders(c *C) {
 	b := []byte{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2}
-	rem, _ := extractHeaders(b)
-	c.Assert(rem, DeepEquals, []byte{1, 2})
+	rest, _ := extractHeaders(b)
+	c.Assert(rest, DeepEquals, []byte{1, 2})
 }
 
 func (s *DeserializationSuite) Test_extractHeaders_returnsErrorWhenGivenSliceIsTooSmall(c *C) {
@@ -57,12 +57,8 @@ func (s *DeserializationSuite) Test_extractLabels_forEmptyQuestionReturnsError(c
 }
 
 func (s *DeserializationSuite) Test_deserialize_returnsMessageWithQuery(c *C) {
-	b := createBytesForHeaders()
-	b = append(b, 3)
-	b = append(b, []byte("www")...)
-	b = append(b, 0)
-	b = append(b, []byte{0, 1}...)
-	b = append(b, []byte{0, 1}...)
+	i := [][]byte{createBytesForHeaders(), []byte{3}, []byte("www"), []byte{0}, oneInTwoBytes(), oneInTwoBytes()}
+	b := flattenBytes(i)
 
 	msg := &message{}
 	err := msg.deserialize(b)
@@ -74,11 +70,8 @@ func (s *DeserializationSuite) Test_deserialize_returnsMessageWithQuery(c *C) {
 }
 
 func (s *DeserializationSuite) Test_deserialize_onQuery_returnsQuery(c *C) {
-	b := []byte{3}
-	b = append(b, []byte("www")...)
-	b = append(b, 0)
-	b = append(b, []byte{0, 1}...)
-	b = append(b, []byte{0, 1}...)
+	i := [][]byte{[]byte{3}, []byte("www"), []byte{0}, oneInTwoBytes(), oneInTwoBytes()}
+	b := flattenBytes(i)
 
 	q := &query{}
 	err := q.deserialize(b)
@@ -90,9 +83,8 @@ func (s *DeserializationSuite) Test_deserialize_onQuery_returnsQuery(c *C) {
 }
 
 func (s *DeserializationSuite) Test_deserialize_returnsOneLabelForSingleQueryAndStopsParsingAfterNullLabel(c *C) {
-	b := createBytesForHeaders()
-	b = append(b, []byte{3, byte('w'), byte('w'), byte('w'), 0}...)
-	b = append(b, []byte{0, 0, 1, 3, 4}...)
+	i := [][]byte{createBytesForHeaders(), []byte{3}, []byte("www"), []byte{0}, oneInTwoBytes(), oneInTwoBytes(), []byte{1, 2, 3}}
+	b := flattenBytes(i)
 
 	msg := &message{}
 	err := msg.deserialize(b)
