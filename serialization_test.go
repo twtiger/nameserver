@@ -6,11 +6,6 @@ type SerializationSuite struct{}
 
 var _ = Suite(&SerializationSuite{})
 
-func createBytesForLabels() []byte {
-	i := [][]byte{[]byte{3}, []byte("www"), []byte{12}, []byte("thoughtworks"), []byte{3}, []byte("com"), []byte{0}}
-	return flattenBytes(i)
-}
-
 func createBytesForAnswer() []byte {
 	inputs := [][]byte{[]byte("twtiger.com."), []byte{0, 1}, []byte{0, 1}, []byte{0, 0, 0, 1}, []byte("123.123.7.8")}
 	return flattenBytes(inputs)
@@ -19,7 +14,7 @@ func createBytesForAnswer() []byte {
 func (s *SerializationSuite) Test_serializeLabels_returnsByteArrayForSingleLabel(c *C) {
 	labels := []label{label("www")}
 
-	exp := []byte{3, byte('w'), byte('w'), byte('w'), 0}
+	exp := createBytesForLabels("www")
 
 	b, err := serializeLabels(labels)
 
@@ -30,8 +25,8 @@ func (s *SerializationSuite) Test_serializeLabels_returnsByteArrayForSingleLabel
 func (s *SerializationSuite) Test_serialize_onLabel_returnsByteArray(c *C) {
 	l := label("www")
 
-	exp := []byte{3, byte('w'), byte('w'), byte('w')}
-
+	exp := []byte{3}
+	exp = append(exp, []byte("www")...)
 	b := l.serialize()
 
 	c.Assert(b, DeepEquals, exp)
@@ -40,8 +35,7 @@ func (s *SerializationSuite) Test_serialize_onLabel_returnsByteArray(c *C) {
 func (s *SerializationSuite) Test_serializeLabels_returnsByteArrayForMultipleLabels(c *C) {
 	labels := []label{label("www"), label("thoughtworks"), label("com")}
 
-	i := [][]byte{createBytesForLabels()}
-	exp := flattenBytes(i)
+	exp := createBytesForLabels("www", "thoughtworks", "com")
 
 	b, err := serializeLabels(labels)
 
@@ -70,7 +64,7 @@ func (s *SerializationSuite) Test_serializeUint32_returnsByteArray(c *C) {
 }
 
 func (s *SerializationSuite) Test_serializeQuery_returnsByteArrayForMessageQuery(c *C) {
-	i := [][]byte{createBytesForLabels(), oneInTwoBytes(), oneInTwoBytes()}
+	i := [][]byte{createBytesForLabels("www", "thoughtworks", "com"), oneInTwoBytes(), oneInTwoBytes()}
 
 	exp := flattenBytes(i)
 
@@ -139,7 +133,7 @@ func (s *SerializationSuite) Test_serializeHeaders_returnsByteArrayofLength12(c 
 }
 
 func (s *SerializationSuite) Test_serialize_returnsByteArrayForMessageWithQuery(c *C) {
-	i := [][]byte{createBytesForHeaders(), createBytesForLabels(), oneInTwoBytes(), oneInTwoBytes()}
+	i := [][]byte{createBytesForHeaders(), createBytesForLabels("www", "thoughtworks", "com"), oneInTwoBytes(), oneInTwoBytes()}
 	exp := flattenBytes(i)
 
 	m := &message{
@@ -156,7 +150,8 @@ func (s *SerializationSuite) Test_serialize_returnsByteArrayForMessageWithQuery(
 }
 
 func (s *SerializationSuite) Test_serialize_returnsByteArrayForMessageWithResponse(c *C) {
-	i := [][]byte{createBytesForHeaders(), createBytesForLabels(), oneInTwoBytes(), oneInTwoBytes(), createBytesForAnswer()}
+	i := [][]byte{createBytesForHeaders(), createBytesForLabels("www", "thoughtworks", "com"), oneInTwoBytes(), oneInTwoBytes(), createBytesForAnswer()}
+
 	exp := flattenBytes(i)
 
 	m := &message{

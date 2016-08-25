@@ -14,3 +14,11 @@ func createBytesForHeaders() []byte {
 func oneInTwoBytes() []byte {
 	return []byte{0, 1}
 }
+
+func createBytesForLabels(s ...string) (b []byte) {
+	for _, e := range s {
+		b = append(b, append([]byte{byte(len(e))}, []byte(e)...)...)
+	}
+	b = append(b, 0)
+	return
+}

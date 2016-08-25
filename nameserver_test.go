@@ -112,17 +112,17 @@ func (s *NameserverSuite) TestThatServerIsReplyingOnListeningPort(c *C) {
 	c.Assert(errRead, IsNil)
 }
 
-func recordNameForSecondLevelDomain(firstLevelDom string, secondLevelDom string) []byte {
-	lenfirstLevelDom := byte(len(firstLevelDom))
-	lenSecondLevelDom := byte(len(secondLevelDom))
+// func recordNameForSecondLevelDomain(firstLevelDom string, secondLevelDom string) []byte {
+// 	lenfirstLevelDom := byte(len(firstLevelDom))
+// 	lenSecondLevelDom := byte(len(secondLevelDom))
 
-	recordName := []byte{lenfirstLevelDom}
-	recordName = append(recordName, []byte(firstLevelDom)...)
-	recordName = append(recordName, lenSecondLevelDom)
-	recordName = append(recordName, []byte(secondLevelDom)...)
-	recordName = append(recordName, 0)
-	return recordName
-}
+// 	recordName := []byte{lenfirstLevelDom}
+// 	recordName = append(recordName, []byte(firstLevelDom)...)
+// 	recordName = append(recordName, lenSecondLevelDom)
+// 	recordName = append(recordName, []byte(secondLevelDom)...)
+// 	recordName = append(recordName, 0)
+// 	return recordName
+// }
 
 func qtypeAndQclass() (qtype []byte, qclass []byte) {
 	b := make([]byte, 2) // TODO pull into a test helper file
@@ -136,7 +136,7 @@ func qtypeAndQclass() (qtype []byte, qclass []byte) {
 
 func (s *NameserverSuite) Test_CreationOfSerializedResponseFromQuery(c *C) {
 	header := make([]byte, 12)
-	recordName := recordNameForSecondLevelDomain("twtiger", "com")
+	recordName := createBytesForLabels("twtiger", "com")
 	message := append(header, recordName...)
 	qtype, qclass := qtypeAndQclass()
 	message = append(message, qtype...)

@@ -38,12 +38,13 @@ func (s *DeserializationSuite) Test_extractLabels_returnsRemainingBytes(c *C) {
 }
 
 func (s *DeserializationSuite) Test_extractLabels_canParseMoreThanOneLabel(c *C) {
-	b := createBytesForLabels()
+	b := createBytesForLabels("www", "thoughtworks", "com")
 
 	labels, _, err := extractLabels(b)
 
 	c.Assert(err, IsNil)
 
+	c.Assert(len(labels), Equals, 3)
 	c.Assert(labels[0], Equals, label("www"))
 	c.Assert(labels[1], Equals, label("thoughtworks"))
 	c.Assert(labels[2], Equals, label("com"))
