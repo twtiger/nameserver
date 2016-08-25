@@ -1,6 +1,6 @@
 package nameserver
 
-func flattenBytes(i [][]byte) (b []byte) {
+func flattenBytes(i ...[]byte) (b []byte) {
 	for _, e := range i {
 		b = append(b, e...)
 	}

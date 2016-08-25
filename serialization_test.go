@@ -7,8 +7,7 @@ type SerializationSuite struct{}
 var _ = Suite(&SerializationSuite{})
 
 func createBytesForAnswer() []byte {
-	inputs := [][]byte{[]byte("twtiger.com."), []byte{0, 1}, []byte{0, 1}, []byte{0, 0, 0, 1}, []byte("123.123.7.8")}
-	return flattenBytes(inputs)
+	return flattenBytes([]byte("twtiger.com."), []byte{0, 1}, []byte{0, 1}, []byte{0, 0, 0, 1}, []byte("123.123.7.8"))
 }
 
 func (s *SerializationSuite) Test_serializeLabels_returnsByteArrayForSingleLabel(c *C) {
@@ -64,9 +63,7 @@ func (s *SerializationSuite) Test_serializeUint32_returnsByteArray(c *C) {
 }
 
 func (s *SerializationSuite) Test_serializeQuery_returnsByteArrayForMessageQuery(c *C) {
-	i := [][]byte{createBytesForLabels("www", "thoughtworks", "com"), oneInTwoBytes(), oneInTwoBytes()}
-
-	exp := flattenBytes(i)
+	exp := flattenBytes(createBytesForLabels("www", "thoughtworks", "com"), oneInTwoBytes(), oneInTwoBytes())
 
 	q := &query{
 		qname:  []label{label("www"), label("thoughtworks"), label("com")},
@@ -133,8 +130,7 @@ func (s *SerializationSuite) Test_serializeHeaders_returnsByteArrayofLength12(c 
 }
 
 func (s *SerializationSuite) Test_serialize_returnsByteArrayForMessageWithQuery(c *C) {
-	i := [][]byte{createBytesForHeaders(), createBytesForLabels("www", "thoughtworks", "com"), oneInTwoBytes(), oneInTwoBytes()}
-	exp := flattenBytes(i)
+	exp := flattenBytes(createBytesForHeaders(), createBytesForLabels("www", "thoughtworks", "com"), oneInTwoBytes(), oneInTwoBytes())
 
 	m := &message{
 		query: &query{
@@ -150,9 +146,7 @@ func (s *SerializationSuite) Test_serialize_returnsByteArrayForMessageWithQuery(
 }
 
 func (s *SerializationSuite) Test_serialize_returnsByteArrayForMessageWithResponse(c *C) {
-	i := [][]byte{createBytesForHeaders(), createBytesForLabels("www", "thoughtworks", "com"), oneInTwoBytes(), oneInTwoBytes(), createBytesForAnswer()}
-
-	exp := flattenBytes(i)
+	exp := flattenBytes(createBytesForHeaders(), createBytesForLabels("www", "thoughtworks", "com"), oneInTwoBytes(), oneInTwoBytes(), createBytesForAnswer())
 
 	m := &message{
 		query: &query{
