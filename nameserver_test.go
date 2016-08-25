@@ -1,6 +1,7 @@
 package nameserver
 
 import (
+	"encoding/binary"
 	"net"
 	"testing"
 
@@ -123,32 +124,43 @@ func recordNameForSecondLevelDomain(firstLevelDom string, secondLevelDom string)
 	return recordName
 }
 
+func qtypeAndQclass() (qtype []byte, qclass []byte) {
+	b := make([]byte, 2) // TODO pull into a test helper file
+	binary.BigEndian.PutUint16(b, uint16(qtypeA))
+	qtype = append(qtype, b...)
+	b = make([]byte, 2)
+	binary.BigEndian.PutUint16(b, uint16(qclassIN))
+	qclass = append(qclass, b...)
+	return
+}
+
 func (s *NameserverSuite) Test_CreationOfSerializedResponseFromQuery(c *C) {
 	header := make([]byte, 12)
 	recordName := recordNameForSecondLevelDomain("twtiger", "com")
 	message := append(header, recordName...)
+	qtype, qclass := qtypeAndQclass()
+	message = append(message, qtype...)
+	message = append(message, qclass...)
 
 	response := respondTo(message)
 
 	c.Assert(response[0:12], DeepEquals, header)
-	c.Assert(response[12:25], DeepEquals, recordName)
+	c.Assert(response[12:25], DeepEquals, recordName) //qname
 
-	// TODO waiting for serialize to be completed
+	//recordType := []byte{0, 1}
+	//recordClass := []byte{0, 1}
+	//recordTTL := []byte{0, 0, 14, 16}
+	//recordRDLength := []byte{4}
+	//recordRData := []byte{123, 123, 7, 8}
 
-	// recordType := []byte{0,1}
-	// recordClass := []byte{0,1}
-	// recordTTL := []byte{0,0,14,16}
-	// recordRDLength := []byte{4}
-	// recordRData := []byte{123, 123, 7, 8}
-
-	// c.Assert(response[25:27], DeepEquals, recordType) // qtype
-	// c.Assert(response[27:29], DeepEquals, recordClass) // qclass
-	// c.Assert(response[29:42], DeepEquals, recordName)
-	// c.Assert(response[42:44], DeepEquals, recordType)
-	// c.Assert(response[44:46], DeepEquals, recordClass)
-	// c.Assert(response[46:48], DeepEquals, recordTTL)
-	// c.Assert(response[48], DeepEquals, recordRDLength)
-	// c.Assert(response[49:50], DeepEquals, recordRData)
+	//c.Assert(response[25:27], DeepEquals, qtype)
+	//c.Assert(response[27:29], DeepEquals, qclass)
+	//c.Assert(response[29:42], DeepEquals, recordName) // answers begin
+	//c.Assert(response[42:44], DeepEquals, recordType)
+	//c.Assert(response[44:46], DeepEquals, recordClass)
+	//c.Assert(response[46:48], DeepEquals, recordTTL)
+	//c.Assert(response[48], DeepEquals, recordRDLength)
+	//c.Assert(response[49:50], DeepEquals, recordRData)
 }
 
 // TODO waiting for serialize to be completed

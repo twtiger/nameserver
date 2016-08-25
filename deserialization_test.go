@@ -61,12 +61,32 @@ func (s *DeserializationSuite) Test_deserialize_returnsMessageWithQuery(c *C) {
 	b = append(b, 3)
 	b = append(b, []byte("www")...)
 	b = append(b, 0)
+	b = append(b, []byte{0, 1}...)
+	b = append(b, []byte{0, 1}...)
 
 	msg := &message{}
 	err := msg.deserialize(b)
 
 	c.Assert(err, IsNil)
 	c.Assert(msg.query.qname[0], Equals, label("www"))
+	c.Assert(msg.query.qtype, Equals, qtypeA)
+	c.Assert(msg.query.qclass, Equals, qclassIN)
+}
+
+func (s *DeserializationSuite) Test_deserialize_onQuery_returnsQuery(c *C) {
+	b := []byte{3}
+	b = append(b, []byte("www")...)
+	b = append(b, 0)
+	b = append(b, []byte{0, 1}...)
+	b = append(b, []byte{0, 1}...)
+
+	q := &query{}
+	err := q.deserialize(b)
+
+	c.Assert(err, IsNil)
+	c.Assert(q.qname[0], Equals, label("www"))
+	c.Assert(q.qtype, Equals, qtypeA)
+	c.Assert(q.qclass, Equals, qclassIN)
 }
 
 func (s *DeserializationSuite) Test_deserialize_returnsOneLabelForSingleQueryAndStopsParsingAfterNullLabel(c *C) {

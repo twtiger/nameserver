@@ -7,16 +7,26 @@ func (m *message) deserialize(b []byte) error {
 	if err != nil {
 		return err
 	}
-	labels, _, err := extractLabels(rem)
+	m.query = &query{}
+	err = m.query.deserialize(rem)
 	if err != nil {
 		return err
 	}
-	m.query = &query{qname: labels}
+	return nil
+}
+
+func (q *query) deserialize(b []byte) error {
+	labels, _, err := extractLabels(b)
+	if err != nil {
+		return err
+	}
+	q.qname = labels
+	q.qtype = qtypeA
+	q.qclass = qclassIN
 	return nil
 }
 
 func extractLabels(b []byte) (l []label, remaining []byte, err error) {
-
 	if b[0] == 0 {
 		return nil, nil, errors.New("no question to extract")
 	}

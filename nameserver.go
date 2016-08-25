@@ -53,6 +53,7 @@ func (n *Nameserver) teardown() error {
 func respondTo(b []byte) []byte {
 	msg := &message{}
 	_ = msg.deserialize(b)
-	sr, _ := msg.serialize()
+	response := msg.response()
+	sr, _ := response.serialize()
 	return sr
 }
