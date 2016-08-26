@@ -3,7 +3,28 @@ package nameserver
 import (
 	"encoding/binary"
 	"errors"
+	"fmt"
 )
+
+func flattenBytes(i ...interface{}) (b []byte) {
+	for _, e := range i {
+		switch k := e.(type) {
+		case string:
+			b = append(b, []byte(k)...)
+		case int:
+			b = append(b, byte(k))
+		case byte:
+			b = append(b, k)
+		case []byte:
+			b = append(b, k...)
+		case uint16:
+			b = append(b, []byte{0, byte(k)}...)
+		default:
+			panic(fmt.Sprintf("cannot flatten: %#v", e))
+		}
+	}
+	return b
+}
 
 func (m *message) serialize() ([]byte, error) {
 	q, err := m.query.serialize()
@@ -11,7 +32,7 @@ func (m *message) serialize() ([]byte, error) {
 		return nil, err
 	}
 
-	return append(serializeHeaders(), append(q, serializeAnswer(m.answers)...)...), nil
+	return flattenBytes(serializeHeaders(), q, serializeAnswer(m.answers)), nil
 }
 
 func (q *query) serialize() ([]byte, error) {
@@ -20,22 +41,13 @@ func (q *query) serialize() ([]byte, error) {
 		return nil, err
 	}
 
-	return append(l, append(serializeUint16(uint16(q.qtype)), serializeUint16(uint16(q.qclass))...)...), nil
+	return flattenBytes(l, serializeUint16(uint16(q.qtype)), serializeUint16(uint16(q.qclass))), nil
 }
 
 func (r *record) serialize() (b []byte) {
 	l, _ := serializeLabels(r.Name)
-	b = append(b, l...)
 
-	b = append(b, serializeUint16(uint16(r.Type))...)
-
-	b = append(b, serializeUint16(uint16(r.Class))...)
-
-	b = append(b, serializeUint32(uint32(r.TTL))...)
-
-	b = append(b, serializeUint16(r.RDLength)...)
-
-	b = append(b, []byte(r.RData)...)
+	b = flattenBytes(l, serializeUint16(uint16(r.Type)), serializeUint16(uint16(r.Class)), serializeUint32(uint32(r.TTL)), serializeUint16(r.RDLength), r.RData)
 	return
 }
 

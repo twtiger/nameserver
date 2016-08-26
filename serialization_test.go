@@ -156,3 +156,11 @@ func (s *SerializationSuite) Test_serialize_returnsErrorForInvalidQueryWithNoLab
 	_, err := m.serialize()
 	c.Assert(err, ErrorMatches, "no labels to serialize")
 }
+
+func (s *SerializationSuite) Test_flattenDifferentTypes(c *C) {
+	exp := append(append(append(append([]byte("foo"), []byte{12}...), []byte{3}...), []byte("bar")...), []byte{0, byte(123)}...)
+
+	bytes := flattenBytes("foo", 12, byte(3), []byte("bar"), uint16(123))
+
+	c.Assert(bytes, DeepEquals, exp)
+}
