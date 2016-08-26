@@ -8,13 +8,8 @@ type SerializationSuite struct{}
 
 var _ = Suite(&SerializationSuite{})
 
-func createBytesForAnswer() []byte {
-	return flattenBytes(twTigerInBytes, oneInTwoBytes(), oneInTwoBytes(), 0, 0, 14, 16, uint16(4), 123, 123, 7, 8)
-}
-
-func createBytesForMultipleAnswers() []byte {
-	answer2 := flattenBytes(twTigerInBytes, oneInTwoBytes(), oneInTwoBytes(), 0, 0, 14, 16, uint16(4), 78, 78, 90, 1)
-	return append(createBytesForAnswer(), answer2...)
+func createBytesForAnswer(w, x, y, z int) []byte {
+	return flattenBytes(twTigerInBytes, []byte{0, 1}, []byte{0, 1}, []byte{0, 0, 0, 1}, uint16(4), w, x, y, z)
 }
 
 func (s *SerializationSuite) Test_serializeLabels_returnsByteArrayForSingleLabel(c *C) {
@@ -83,7 +78,7 @@ func (s *SerializationSuite) Test_serializeQuery_returnsByteArrayForMessageQuery
 func (s *SerializationSuite) Test_serialize_forRecord_returnsByteArrayForSingleRecord(c *C) {
 	record := tigerRecord1
 
-	exp := createBytesForAnswer()
+	exp := createBytesForAnswer(123, 123, 7, 8)
 
 	b := record.serialize()
 	c.Assert(b, DeepEquals, exp)
@@ -95,7 +90,7 @@ func (s *SerializationSuite) Test_serializeAnswer_returnsByteArrayForMultipleRec
 		tigerRecord2,
 	}
 
-	exp := createBytesForMultipleAnswers()
+	exp := append(createBytesForAnswer(123, 123, 7, 8), createBytesForAnswer(78, 78, 90, 1)...)
 
 	b := serializeAnswer(records)
 	c.Assert(b, DeepEquals, exp)
@@ -132,7 +127,7 @@ func (s *SerializationSuite) Test_serialize_returnsByteArrayForMessageWithQuery(
 }
 
 func (s *SerializationSuite) Test_serialize_returnsByteArrayForMessageWithResponse(c *C) {
-	exp := flattenBytes(createBytesForHeaders(), twTigerInBytes, oneInTwoBytes(), oneInTwoBytes(), createBytesForAnswer())
+	exp := flattenBytes(createBytesForHeaders(), twTigerInBytes, oneInTwoBytes(), oneInTwoBytes(), createBytesForAnswer(123, 123, 7, 8))
 
 	m := &message{
 		query: &query{
