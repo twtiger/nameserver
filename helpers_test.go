@@ -1,6 +1,9 @@
 package nameserver
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+)
 
 func flattenBytes(i ...interface{}) (b []byte) {
 	for _, e := range i {
@@ -30,10 +33,21 @@ func oneInTwoBytes() []byte {
 	return []byte{0, 1}
 }
 
-func createBytesForLabels(s ...string) (b []byte) {
-	for _, e := range s {
-		b = flattenBytes(b, len(e), e)
+func createBytesForLabels(l []label) (b []byte) {
+	for _, e := range l {
+		b = flattenBytes(b, len(string(e)), string(e))
 	}
 	b = append(b, 0)
 	return
 }
+
+func createLabelsFor(s string) (labels []label) {
+	a := strings.Split(s, ".")
+	for _, l := range a {
+		labels = append(labels, label(l))
+	}
+	return
+}
+
+var twTigerInLabels = createLabelsFor("twtiger.com")
+var twTigerInBytes = createBytesForLabels(twTigerInLabels)

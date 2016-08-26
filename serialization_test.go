@@ -1,24 +1,26 @@
 package nameserver
 
-import . "gopkg.in/check.v1"
+import (
+	. "gopkg.in/check.v1"
+)
 
 type SerializationSuite struct{}
 
 var _ = Suite(&SerializationSuite{})
 
 func createBytesForAnswer() []byte {
-	return flattenBytes([]byte{7}, []byte("twtiger"), []byte{3}, []byte("com"), []byte{0}, []byte{0, 1}, []byte{0, 1}, []byte{0, 0, 0, 1}, uint16(4), 123, 123, 7, 8)
+	return flattenBytes(twTigerInBytes, oneInTwoBytes(), oneInTwoBytes(), 0, 0, 14, 16, uint16(4), 123, 123, 7, 8)
 }
 
 func createBytesForMultipleAnswers() []byte {
-	answer2 := flattenBytes([]byte{7}, []byte("twtiger"), []byte{3}, []byte("com"), []byte{0}, []byte{0, 1}, []byte{0, 1}, []byte{0, 0, 0, 1}, uint16(4), 78, 78, 90, 1)
+	answer2 := flattenBytes(twTigerInBytes, oneInTwoBytes(), oneInTwoBytes(), 0, 0, 14, 16, uint16(4), 78, 78, 90, 1)
 	return append(createBytesForAnswer(), answer2...)
 }
 
 func (s *SerializationSuite) Test_serializeLabels_returnsByteArrayForSingleLabel(c *C) {
-	labels := []label{label("www")}
+	labels := createLabelsFor("www")
 
-	exp := createBytesForLabels("www")
+	exp := createBytesForLabels(labels)
 
 	b, err := serializeLabels(labels)
 
@@ -29,19 +31,16 @@ func (s *SerializationSuite) Test_serializeLabels_returnsByteArrayForSingleLabel
 func (s *SerializationSuite) Test_serialize_onLabel_returnsByteArray(c *C) {
 	l := label("www")
 
-	exp := []byte{3}
-	exp = append(exp, []byte("www")...)
+	exp := flattenBytes(3, "www")
 	b := l.serialize()
 
 	c.Assert(b, DeepEquals, exp)
 }
 
 func (s *SerializationSuite) Test_serializeLabels_returnsByteArrayForMultipleLabels(c *C) {
-	labels := []label{label("www"), label("thoughtworks"), label("com")}
+	exp := twTigerInBytes
 
-	exp := createBytesForLabels("www", "thoughtworks", "com")
-
-	b, err := serializeLabels(labels)
+	b, err := serializeLabels(twTigerInLabels)
 
 	c.Assert(err, IsNil)
 	c.Assert(b, DeepEquals, exp)
@@ -68,10 +67,11 @@ func (s *SerializationSuite) Test_serializeUint32_returnsByteArray(c *C) {
 }
 
 func (s *SerializationSuite) Test_serializeQuery_returnsByteArrayForMessageQuery(c *C) {
-	exp := flattenBytes(createBytesForLabels("www", "thoughtworks", "com"), oneInTwoBytes(), oneInTwoBytes())
+
+	exp := flattenBytes(twTigerInBytes, oneInTwoBytes(), oneInTwoBytes())
 
 	q := &query{
-		qname:  []label{label("www"), label("thoughtworks"), label("com")},
+		qname:  twTigerInLabels,
 		qtype:  qtypeA,
 		qclass: qclassIN,
 	}
@@ -81,14 +81,7 @@ func (s *SerializationSuite) Test_serializeQuery_returnsByteArrayForMessageQuery
 }
 
 func (s *SerializationSuite) Test_serialize_forRecord_returnsByteArrayForSingleRecord(c *C) {
-	record := &record{
-		Name:     []label{"twtiger", "com"},
-		Type:     1,
-		Class:    1,
-		TTL:      1,
-		RDLength: 4,
-		RData:    []byte{123, 123, 7, 8},
-	}
+	record := tigerRecord1
 
 	exp := createBytesForAnswer()
 
@@ -98,22 +91,8 @@ func (s *SerializationSuite) Test_serialize_forRecord_returnsByteArrayForSingleR
 
 func (s *SerializationSuite) Test_serializeAnswer_returnsByteArrayForMultipleRecords(c *C) {
 	records := []*record{
-		&record{
-			Name:     []label{"twtiger", "com"},
-			Type:     1,
-			Class:    1,
-			TTL:      1,
-			RDLength: 4,
-			RData:    []byte{123, 123, 7, 8},
-		},
-		&record{
-			Name:     []label{"twtiger", "com"},
-			Type:     1,
-			Class:    1,
-			TTL:      1,
-			RDLength: 4,
-			RData:    []byte{78, 78, 90, 1},
-		},
+		tigerRecord1,
+		tigerRecord2,
 	}
 
 	exp := createBytesForMultipleAnswers()
@@ -137,11 +116,11 @@ func (s *SerializationSuite) Test_serializeHeaders_returnsByteArrayofLength12(c 
 }
 
 func (s *SerializationSuite) Test_serialize_returnsByteArrayForMessageWithQuery(c *C) {
-	exp := flattenBytes(createBytesForHeaders(), createBytesForLabels("www", "thoughtworks", "com"), oneInTwoBytes(), oneInTwoBytes())
+	exp := flattenBytes(createBytesForHeaders(), twTigerInBytes, oneInTwoBytes(), oneInTwoBytes())
 
 	m := &message{
 		query: &query{
-			qname:  []label{label("www"), label("thoughtworks"), label("com")},
+			qname:  twTigerInLabels,
 			qtype:  qtypeA,
 			qclass: qclassIN,
 		},
@@ -153,23 +132,16 @@ func (s *SerializationSuite) Test_serialize_returnsByteArrayForMessageWithQuery(
 }
 
 func (s *SerializationSuite) Test_serialize_returnsByteArrayForMessageWithResponse(c *C) {
-	exp := flattenBytes(createBytesForHeaders(), createBytesForLabels("www", "thoughtworks", "com"), oneInTwoBytes(), oneInTwoBytes(), createBytesForAnswer())
+	exp := flattenBytes(createBytesForHeaders(), twTigerInBytes, oneInTwoBytes(), oneInTwoBytes(), createBytesForAnswer())
 
 	m := &message{
 		query: &query{
-			qname:  []label{label("www"), label("thoughtworks"), label("com")},
+			qname:  twTigerInLabels,
 			qtype:  qtypeA,
 			qclass: qclassIN,
 		},
 		answers: []*record{
-			&record{
-				Name:     []label{"twtiger", "com"},
-				Type:     1,
-				Class:    1,
-				TTL:      1,
-				RDLength: 4,
-				RData:    []byte{123, 123, 7, 8},
-			},
+			tigerRecord1,
 		},
 	}
 

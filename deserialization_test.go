@@ -38,7 +38,7 @@ func (s *DeserializationSuite) Test_extractLabels_returnsRemainingBytes(c *C) {
 }
 
 func (s *DeserializationSuite) Test_extractLabels_canParseMoreThanOneLabel(c *C) {
-	b := createBytesForLabels("www", "thoughtworks", "com")
+	b := createBytesForLabels(createLabelsFor("www.thoughtworks.com"))
 
 	labels, _, err := extractLabels(b)
 
