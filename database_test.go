@@ -14,19 +14,21 @@ func (s *DatabaseSuite) Test_RetrievalOfTwoARecordsForOurAuthoritativeDomain(c *
 	c.Assert(len(records), Equals, 2)
 	c.Assert(records[0], DeepEquals,
 		&record{
-			Name:  []label{"twtiger", "com"},
-			Type:  qtypeA,
-			Class: qclassIN,
-			TTL:   oneHour,
-			RData: "123.123.7.8",
+			Name:     []label{"twtiger", "com"},
+			Type:     qtypeA,
+			Class:    qclassIN,
+			TTL:      oneHour,
+			RDLength: 4,
+			RData:    []byte{123, 123, 7, 8},
 		})
 	c.Assert(records[1], DeepEquals,
 		&record{
-			Name:  []label{"twtiger", "com"},
-			Type:  qtypeA,
-			Class: qclassIN,
-			TTL:   oneHour,
-			RData: "78.78.90.1",
+			Name:     []label{"twtiger", "com"},
+			Type:     qtypeA,
+			Class:    qclassIN,
+			TTL:      oneHour,
+			RDLength: 4,
+			RData:    []byte{78, 78, 90, 1},
 		})
 }
 

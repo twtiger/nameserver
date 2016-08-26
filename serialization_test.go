@@ -7,7 +7,12 @@ type SerializationSuite struct{}
 var _ = Suite(&SerializationSuite{})
 
 func createBytesForAnswer() []byte {
-	return flattenBytes([]byte{7}, []byte("twtiger"), []byte{3}, []byte("com"), []byte{0}, []byte{0, 1}, []byte{0, 1}, []byte{0, 0, 0, 1}, []byte("123.123.7.8"))
+	return flattenBytes([]byte{7}, []byte("twtiger"), []byte{3}, []byte("com"), []byte{0}, []byte{0, 1}, []byte{0, 1}, []byte{0, 0, 0, 1}, uint16(4), 123, 123, 7, 8)
+}
+
+func createBytesForMultipleAnswers() []byte {
+	answer2 := flattenBytes([]byte{7}, []byte("twtiger"), []byte{3}, []byte("com"), []byte{0}, []byte{0, 1}, []byte{0, 1}, []byte{0, 0, 0, 1}, uint16(4), 78, 78, 90, 1)
+	return append(createBytesForAnswer(), answer2...)
 }
 
 func (s *SerializationSuite) Test_serializeLabels_returnsByteArrayForSingleLabel(c *C) {
@@ -77,11 +82,12 @@ func (s *SerializationSuite) Test_serializeQuery_returnsByteArrayForMessageQuery
 
 func (s *SerializationSuite) Test_serialize_forRecord_returnsByteArrayForSingleRecord(c *C) {
 	record := &record{
-		Name:  []label{"twtiger", "com"},
-		Type:  1,
-		Class: 1,
-		TTL:   1,
-		RData: "123.123.7.8",
+		Name:     []label{"twtiger", "com"},
+		Type:     1,
+		Class:    1,
+		TTL:      1,
+		RDLength: 4,
+		RData:    []byte{123, 123, 7, 8},
 	}
 
 	exp := createBytesForAnswer()
@@ -93,23 +99,24 @@ func (s *SerializationSuite) Test_serialize_forRecord_returnsByteArrayForSingleR
 func (s *SerializationSuite) Test_serializeAnswer_returnsByteArrayForMultipleRecords(c *C) {
 	records := []*record{
 		&record{
-			Name:  []label{"twtiger", "com"},
-			Type:  1,
-			Class: 1,
-			TTL:   1,
-			RData: "123.123.7.8",
+			Name:     []label{"twtiger", "com"},
+			Type:     1,
+			Class:    1,
+			TTL:      1,
+			RDLength: 4,
+			RData:    []byte{123, 123, 7, 8},
 		},
 		&record{
-			Name:  []label{"twtiger", "com"},
-			Type:  1,
-			Class: 1,
-			TTL:   1,
-			RData: "123.123.7.8",
+			Name:     []label{"twtiger", "com"},
+			Type:     1,
+			Class:    1,
+			TTL:      1,
+			RDLength: 4,
+			RData:    []byte{78, 78, 90, 1},
 		},
 	}
 
-	exp := createBytesForAnswer()
-	exp = append(exp, createBytesForAnswer()...)
+	exp := createBytesForMultipleAnswers()
 
 	b := serializeAnswer(records)
 	c.Assert(b, DeepEquals, exp)
@@ -156,11 +163,12 @@ func (s *SerializationSuite) Test_serialize_returnsByteArrayForMessageWithRespon
 		},
 		answers: []*record{
 			&record{
-				Name:  []label{"twtiger", "com"},
-				Type:  1,
-				Class: 1,
-				TTL:   1,
-				RData: "123.123.7.8",
+				Name:     []label{"twtiger", "com"},
+				Type:     1,
+				Class:    1,
+				TTL:      1,
+				RDLength: 4,
+				RData:    []byte{123, 123, 7, 8},
 			},
 		},
 	}

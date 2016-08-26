@@ -33,6 +33,8 @@ func (r *record) serialize() (b []byte) {
 
 	b = append(b, serializeUint32(uint32(r.TTL))...)
 
+	b = append(b, serializeUint16(r.RDLength)...)
+
 	b = append(b, []byte(r.RData)...)
 	return
 }

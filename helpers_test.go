@@ -13,6 +13,8 @@ func flattenBytes(i ...interface{}) (b []byte) {
 			b = append(b, k)
 		case []byte:
 			b = append(b, k...)
+		case uint16:
+			b = append(b, []byte{0, byte(k)}...)
 		default:
 			panic(fmt.Sprintf("cannot flatten: %#v", e))
 		}

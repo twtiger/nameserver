@@ -14,7 +14,7 @@ type record struct {
 	Class    qClass
 	TTL      uint32
 	RDLength uint16
-	RData    string
+	RData    []byte
 }
 
 type message struct {
