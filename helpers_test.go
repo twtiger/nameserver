@@ -29,9 +29,7 @@ func createBytesForHeaders() []byte {
 	return []byte{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
 }
 
-func oneInTwoBytes() []byte {
-	return []byte{0, 1}
-}
+var oneInTwoBytes = []byte{0, 1}
 
 func createBytesForLabels(l []label) (b []byte) {
 	for _, e := range l {

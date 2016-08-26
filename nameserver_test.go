@@ -114,8 +114,8 @@ func (s *NameserverSuite) TestThatServerIsReplyingOnListeningPort(c *C) {
 func (s *NameserverSuite) Test_CreationOfSerializedResponseFromQuery(c *C) {
 	header := make([]byte, 12)
 	recordName := twTigerInBytes
-	qtype := oneInTwoBytes()
-	qclass := oneInTwoBytes()
+	qtype := oneInTwoBytes
+	qclass := oneInTwoBytes
 	message := flattenBytes(header, recordName, qtype, qclass)
 
 	response := respondTo(message)

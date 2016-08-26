@@ -9,7 +9,7 @@ type SerializationSuite struct{}
 var _ = Suite(&SerializationSuite{})
 
 func createBytesForAnswer(w, x, y, z int) []byte {
-	return flattenBytes(twTigerInBytes, []byte{0, 1}, []byte{0, 1}, []byte{0, 0, 0, 1}, uint16(4), w, x, y, z)
+	return flattenBytes(twTigerInBytes, oneInTwoBytes, oneInTwoBytes, 0, 0, 14, 16, uint16(4), w, x, y, z)
 }
 
 func (s *SerializationSuite) Test_serializeLabels_returnsByteArrayForSingleLabel(c *C) {
@@ -63,7 +63,7 @@ func (s *SerializationSuite) Test_serializeUint32_returnsByteArray(c *C) {
 
 func (s *SerializationSuite) Test_serializeQuery_returnsByteArrayForMessageQuery(c *C) {
 
-	exp := flattenBytes(twTigerInBytes, oneInTwoBytes(), oneInTwoBytes())
+	exp := flattenBytes(twTigerInBytes, oneInTwoBytes, oneInTwoBytes)
 
 	q := &query{
 		qname:  twTigerInLabels,
@@ -111,7 +111,7 @@ func (s *SerializationSuite) Test_serializeHeaders_returnsByteArrayofLength12(c 
 }
 
 func (s *SerializationSuite) Test_serialize_returnsByteArrayForMessageWithQuery(c *C) {
-	exp := flattenBytes(createBytesForHeaders(), twTigerInBytes, oneInTwoBytes(), oneInTwoBytes())
+	exp := flattenBytes(createBytesForHeaders(), twTigerInBytes, oneInTwoBytes, oneInTwoBytes)
 
 	m := &message{
 		query: &query{
@@ -127,7 +127,7 @@ func (s *SerializationSuite) Test_serialize_returnsByteArrayForMessageWithQuery(
 }
 
 func (s *SerializationSuite) Test_serialize_returnsByteArrayForMessageWithResponse(c *C) {
-	exp := flattenBytes(createBytesForHeaders(), twTigerInBytes, oneInTwoBytes(), oneInTwoBytes(), createBytesForAnswer(123, 123, 7, 8))
+	exp := flattenBytes(createBytesForHeaders(), twTigerInBytes, oneInTwoBytes, oneInTwoBytes, createBytesForAnswer(123, 123, 7, 8))
 
 	m := &message{
 		query: &query{
