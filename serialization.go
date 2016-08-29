@@ -32,7 +32,7 @@ func (m *message) serialize() ([]byte, error) {
 		return nil, err
 	}
 
-	return flattenBytes(serializeHeaders(), q, serializeAnswer(m.answers)), nil
+	return flattenBytes(serializeHeaders(m.header), q, serializeAnswer(m.answers)), nil
 }
 
 func (q *query) serialize() ([]byte, error) {
@@ -89,6 +89,9 @@ func serializeAnswer(r []*record) (b []byte) {
 	return
 }
 
-func serializeHeaders() []byte {
-	return make([]byte, 12)
+func serializeHeaders(h *header) (b []byte) {
+	IDinBytes := serializeUint16(h.ID)
+	b = []byte(IDinBytes)
+	b = append(b, []byte{0, 0, 0, 0, 0, 0, 0, 0, 0, 0}...)
+	return
 }

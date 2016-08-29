@@ -1,6 +1,8 @@
 package nameserver
 
-import . "gopkg.in/check.v1"
+import (
+	. "gopkg.in/check.v1"
+)
 
 type DeserializationSuite struct{}
 
@@ -57,13 +59,14 @@ func (s *DeserializationSuite) Test_extractLabels_forEmptyQuestionReturnsError(c
 	c.Assert(err, ErrorMatches, "no question to extract")
 }
 
-func (s *DeserializationSuite) Test_deserialize_returnsMessageWithQuery(c *C) {
+func (s *DeserializationSuite) Test_deserialize_returnsFullMessage(c *C) {
 	b := flattenBytes(createBytesForHeaders(), 3, "www", 0, oneInTwoBytes, oneInTwoBytes)
 
 	msg := &message{}
 	err := msg.deserialize(b)
 
 	c.Assert(err, IsNil)
+	c.Assert(msg.header.ID, Equals, idNum)
 	c.Assert(msg.query.qname[0], Equals, label("www"))
 	c.Assert(msg.query.qtype, Equals, qtypeA)
 	c.Assert(msg.query.qclass, Equals, qclassIN)
@@ -105,4 +108,15 @@ func (s *DeserializationSuite) Test_deserialize_returnsErrorQueryIsInvalid(c *C)
 	msg := &message{}
 	err := msg.deserialize(b)
 	c.Assert(err, Not(IsNil))
+}
+
+func (s *DeserializationSuite) Test_deserialize_headersCorrectly(c *C) {
+	b := flattenBytes(4, 210, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+
+	h := &header{}
+	h.deserialize(b)
+
+	const idNum uint16 = 1234
+
+	c.Assert(h.ID, Equals, idNum)
 }

@@ -3,7 +3,7 @@ package nameserver
 import "strings"
 
 func createBytesForHeaders() []byte {
-	return []byte{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
+	return []byte{4, 210, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
 }
 
 var oneInTwoBytes = []byte{0, 1}
@@ -26,3 +26,5 @@ func createLabelsFor(s string) (labels []label) {
 
 var twTigerInLabels = createLabelsFor("twtiger.com")
 var twTigerInBytes = createBytesForLabels(twTigerInLabels)
+
+const idNum uint16 = 1234

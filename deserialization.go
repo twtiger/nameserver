@@ -1,18 +1,27 @@
 package nameserver
 
-import "errors"
+import (
+	"encoding/binary"
+	"errors"
+)
 
 func (m *message) deserialize(b []byte) error {
 	rem, err := extractHeaders(b)
 	if err != nil {
 		return err
 	}
+	m.header = &header{}
+	m.header.deserialize(b)
 	m.query = &query{}
 	err = m.query.deserialize(rem)
 	if err != nil {
 		return err
 	}
 	return nil
+}
+
+func (h *header) deserialize(b []byte) {
+	h.ID = binary.BigEndian.Uint16(b[:2])
 }
 
 func (q *query) deserialize(b []byte) error {

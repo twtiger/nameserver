@@ -105,15 +105,22 @@ func (s *SerializationSuite) Test_serializeAnswer_returnsEmptyByteArrayForNoAnsw
 	c.Assert(b, DeepEquals, exp)
 }
 
-func (s *SerializationSuite) Test_serializeHeaders_returnsByteArrayofLength12(c *C) {
-	b := serializeHeaders()
+func (s *SerializationSuite) Test_serializeHeaders_returnsByteArrayofLength12_withID(c *C) {
+	header := &header{ID: idNum}
+
+	b := serializeHeaders(header)
+
 	c.Assert(len(b), Equals, 12)
+	c.Assert(b, DeepEquals, []byte{4, 210, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
 }
 
 func (s *SerializationSuite) Test_serialize_returnsByteArrayForMessageWithQuery(c *C) {
 	exp := flattenBytes(createBytesForHeaders(), twTigerInBytes, oneInTwoBytes, oneInTwoBytes)
 
 	m := &message{
+		header: &header{
+			ID: idNum,
+		},
 		query: &query{
 			qname:  twTigerInLabels,
 			qtype:  qtypeA,
@@ -130,6 +137,9 @@ func (s *SerializationSuite) Test_serialize_returnsByteArrayForMessageWithRespon
 	exp := flattenBytes(createBytesForHeaders(), twTigerInBytes, oneInTwoBytes, oneInTwoBytes, createBytesForAnswer([]byte{123, 123, 7, 8}))
 
 	m := &message{
+		header: &header{
+			ID: idNum,
+		},
 		query: &query{
 			qname:  twTigerInLabels,
 			qtype:  qtypeA,
