@@ -41,7 +41,7 @@ func (s *FunctionalSuite) TearDownTest(c *C) {
 // }
 
 func (s *FunctionalSuite) Test_CreationOfSerializedResponseFromQuery(c *C) {
-	header := make([]byte, 12)
+	header := createBytesForHeaders()
 	recordName := twTigerInBytes
 	qtype := oneInTwoBytes
 	qclass := oneInTwoBytes

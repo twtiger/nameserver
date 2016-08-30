@@ -111,7 +111,7 @@ func (s *DeserializationSuite) Test_deserialize_returnsErrorQueryIsInvalid(c *C)
 }
 
 func (s *DeserializationSuite) Test_deserialize_headersCorrectly(c *C) {
-	b := flattenBytes(4, 210, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0)
+	b := flattenBytes(4, 210, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0)
 
 	h := &header{}
 	h.deserialize(b)
