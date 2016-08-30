@@ -5,6 +5,7 @@ type label string
 type header struct {
 	id      uint16
 	qdCount uint16
+	anCount uint16
 }
 
 type query struct {

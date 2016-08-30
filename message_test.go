@@ -22,7 +22,8 @@ func createQueryFor(d string, id uint16) *message {
 	return &message{
 		header: &header{
 			id:      id,
-			qdCount: 1,
+			qdCount: oneQuery,
+			anCount: twoAnswers,
 		},
 		query: &query{
 			qname:  domainNameToLabels(d),
@@ -37,17 +38,10 @@ func (s *MessageSuite) Test_ResponseForAuthoritativeZoneQuery(c *C) {
 
 	r := q.response()
 
-	c.Assert(r.header, DeepEquals, &header{
-		id:      1234,
-		qdCount: 1,
-	})
-	c.Assert(r.query, DeepEquals, &query{
-		qname:  []label{"twtiger", "com"},
-		qtype:  qtypeA,
-		qclass: qclassIN,
-	})
-	c.Assert(len(r.answers), Equals, 2)
+	c.Assert(r.header, DeepEquals, q.header)
+	c.Assert(r.query, DeepEquals, q.query)
 
+	c.Assert(len(r.answers), Equals, 2)
 	c.Assert(r.answers[0], DeepEquals,
 		&record{
 			name:     []label{"twtiger", "com"},
@@ -73,12 +67,8 @@ func (s *MessageSuite) Test_ResponseForExtNameServerQuery(c *C) {
 
 	r := q.response()
 
-	c.Assert(r.header, DeepEquals, &header{id: 456, qdCount: 1})
+	c.Assert(r.header, DeepEquals, q.header)
+	c.Assert(r.query, DeepEquals, q.query)
 
-	c.Assert(r.query, DeepEquals, &query{
-		qname:  []label{"wireshark", "org"},
-		qtype:  qtypeA,
-		qclass: qclassIN,
-	})
 	c.Assert(len(r.answers), Equals, 0)
 }

@@ -94,6 +94,7 @@ func serializeAnswer(r []*record) (b []byte) {
 func serializeHeaders(h *header) (b []byte) {
 	IDinBytes := serializeUint16(h.id)
 	qdCountInBytes := serializeUint16(h.qdCount)
-	b = flattenBytes(IDinBytes, 0, 0, qdCountInBytes, 0, 0, 0, 0, 0, 0)
+	anCountInBytes := serializeUint16(h.anCount)
+	b = flattenBytes(IDinBytes, 0, 0, qdCountInBytes, anCountInBytes, 0, 0, 0, 0)
 	return
 }

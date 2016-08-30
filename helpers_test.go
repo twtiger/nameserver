@@ -6,6 +6,8 @@ import (
 )
 
 const idNum uint16 = 1234
+const oneQuery uint16 = 1
+const twoAnswers uint16 = 2
 const nsPort = 8899
 
 var twTigerInLabels = createLabelsFor("twtiger.com")
@@ -14,7 +16,7 @@ var ns Nameserver
 var oneInTwoBytes = []byte{0, 1}
 
 func createBytesForHeaders() []byte {
-	return []byte{4, 210, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0}
+	return []byte{4, 210, 0, 0, 0, 1, 0, 2, 0, 0, 0, 0}
 }
 
 func createBytesForLabels(l []label) (b []byte) {
