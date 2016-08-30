@@ -47,7 +47,10 @@ func (n *Nameserver) reply(serializedResponse []byte, retAddr *net.UDPAddr) {
 }
 
 func (n *Nameserver) teardown() error {
-	return n.ucon.Close()
+	if n.ucon != nil {
+		return n.ucon.Close()
+	}
+	return nil
 }
 
 func respondTo(b []byte) []byte {

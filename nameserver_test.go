@@ -11,9 +11,7 @@ type NameserverSuite struct{}
 var _ = Suite(&NameserverSuite{})
 
 func (s *NameserverSuite) TearDownTest(c *C) {
-	if ns.ucon != nil {
-		ns.teardown()
-	}
+	ns.teardown()
 }
 
 func (s *NameserverSuite) TestSuccessfulConnectionHasValidAddress(c *C) {
@@ -42,17 +40,14 @@ func (s *NameserverSuite) TestCannotUseServeWithoutConnecting(c *C) {
 	c.Assert(err, ErrorMatches, "not connected: must successfully connect with nameserver.Connect first")
 }
 
-func (s *NameserverSuite) TestThatServerIsReplyingOnListeningPort(c *C) {
-	const resPort = 8845
+func setUpListener(resPort int) ([]byte, chan error, chan *net.UDPAddr) {
 	errChan := make(chan error)
 	addrChan := make(chan *net.UDPAddr)
-
-	ns = localServer(true)
-	ns.Connect()
+	b := make([]byte, 512)
 
 	resolverListener, _ := net.ListenUDP("udp", localhost(resPort))
+
 	go func() {
-		b := make([]byte, 512)
 		_, ra, err := resolverListener.ReadFromUDP(b)
 		defer resolverListener.Close()
 
@@ -60,11 +55,40 @@ func (s *NameserverSuite) TestThatServerIsReplyingOnListeningPort(c *C) {
 		errChan <- err
 	}()
 
+	return b, errChan, addrChan
+}
+
+func (s *NameserverSuite) Test_reply_OnCorrectListeningPort(c *C) {
+	const resPort = 8845
+
+	ns = localServer(true)
+	ns.Connect()
+
+	var _, errChan, addrChan = setUpListener(resPort)
+
 	ns.reply([]byte("hi"), localhost(resPort))
 
 	retAddr := <-addrChan
 	errRead := <-errChan
+
 	c.Assert(retAddr.IP.String(), Equals, "127.0.0.1")
 	c.Assert(retAddr.Port, Equals, nsPort)
+	c.Assert(errRead, IsNil)
+}
+
+func (s *NameserverSuite) Test_reply_WritesToResolverSuccessfully(c *C) {
+	const resPort = 8845
+
+	ns = localServer(true)
+	ns.Connect()
+
+	var b, errChan, addrChan = setUpListener(resPort)
+
+	ns.reply([]byte("hi"), localhost(resPort))
+
+	<-addrChan
+	errRead := <-errChan
+
+	c.Assert(b[:2], DeepEquals, []byte("hi"))
 	c.Assert(errRead, IsNil)
 }
