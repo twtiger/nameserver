@@ -90,7 +90,7 @@ func serializeAnswer(r []*record) (b []byte) {
 }
 
 func serializeHeaders(h *header) (b []byte) {
-	IDinBytes := serializeUint16(h.ID)
+	IDinBytes := serializeUint16(h.id)
 	b = []byte(IDinBytes)
 	b = append(b, []byte{0, 0, 0, 0, 0, 0, 0, 0, 0, 0}...)
 	return

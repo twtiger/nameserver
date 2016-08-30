@@ -66,7 +66,7 @@ func (s *DeserializationSuite) Test_deserialize_returnsFullMessage(c *C) {
 	err := msg.deserialize(b)
 
 	c.Assert(err, IsNil)
-	c.Assert(msg.header.ID, Equals, idNum)
+	c.Assert(msg.header.id, Equals, idNum)
 	c.Assert(msg.query.qname[0], Equals, label("www"))
 	c.Assert(msg.query.qtype, Equals, qtypeA)
 	c.Assert(msg.query.qclass, Equals, qclassIN)
@@ -118,5 +118,5 @@ func (s *DeserializationSuite) Test_deserialize_headersCorrectly(c *C) {
 
 	const idNum uint16 = 1234
 
-	c.Assert(h.ID, Equals, idNum)
+	c.Assert(h.id, Equals, idNum)
 }

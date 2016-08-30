@@ -21,7 +21,7 @@ func (m *message) deserialize(b []byte) error {
 }
 
 func (h *header) deserialize(b []byte) {
-	h.ID = binary.BigEndian.Uint16(b[:2])
+	h.id = binary.BigEndian.Uint16(b[:2])
 }
 
 func (q *query) deserialize(b []byte) error {

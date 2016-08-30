@@ -106,7 +106,7 @@ func (s *SerializationSuite) Test_serializeAnswer_returnsEmptyByteArrayForNoAnsw
 }
 
 func (s *SerializationSuite) Test_serializeHeaders_returnsByteArrayofLength12_withID(c *C) {
-	header := &header{ID: idNum}
+	header := &header{id: idNum}
 
 	b := serializeHeaders(header)
 
@@ -119,7 +119,7 @@ func (s *SerializationSuite) Test_serialize_returnsByteArrayForMessageWithQuery(
 
 	m := &message{
 		header: &header{
-			ID: idNum,
+			id: idNum,
 		},
 		query: &query{
 			qname:  twTigerInLabels,
@@ -138,7 +138,7 @@ func (s *SerializationSuite) Test_serialize_returnsByteArrayForMessageWithRespon
 
 	m := &message{
 		header: &header{
-			ID: idNum,
+			id: idNum,
 		},
 		query: &query{
 			qname:  twTigerInLabels,

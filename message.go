@@ -3,7 +3,7 @@ package nameserver
 type label string
 
 type header struct {
-	ID uint16
+	id uint16
 }
 
 type query struct {
