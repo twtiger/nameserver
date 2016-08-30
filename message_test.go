@@ -22,6 +22,7 @@ func createQueryFor(d string, id uint16) *message {
 	return &message{
 		header: &header{
 			id: id,
+			qdCount: 1,
 		},
 		query: &query{
 			qname:  domainNameToLabels(d),
@@ -38,6 +39,7 @@ func (s *MessageSuite) Test_ResponseForAuthoritativeZoneQuery(c *C) {
 
 	c.Assert(r.header, DeepEquals, &header{
 		id: 1234,
+		qdCount: 1,
 	})
 	c.Assert(r.query, DeepEquals, &query{
 		qname:  []label{"twtiger", "com"},
@@ -71,7 +73,7 @@ func (s *MessageSuite) Test_ResponseForExtNameServerQuery(c *C) {
 
 	r := q.response()
 
-	c.Assert(r.header, DeepEquals, &header{id: 456})
+	c.Assert(r.header, DeepEquals, &header{id: 456, qdCount: 1})
 
 	c.Assert(r.query, DeepEquals, &query{
 		qname:  []label{"wireshark", "org"},
