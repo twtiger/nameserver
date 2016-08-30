@@ -30,9 +30,15 @@ type message struct {
 }
 
 func (m *message) response() *message {
+	records := retrieve(m.query.qname)
+	numOfRecords := uint16(len(records))
 	return &message{
-		header:  m.header,
+		header: &header{
+			id:      m.header.id,
+			qdCount: m.header.qdCount,
+			anCount: numOfRecords,
+		},
 		query:   m.query,
-		answers: retrieve(m.query.qname),
+		answers: records,
 	}
 }

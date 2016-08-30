@@ -1,6 +1,7 @@
 package nameserver
 
 import (
+	"net"
 	"testing"
 
 	dnsr "github.com/bogdanovich/dns_resolver"
@@ -21,24 +22,24 @@ func (s *FunctionalSuite) TearDownTest(c *C) {
 	}
 }
 
-// func (s *FunctionalSuite) Test_ReceivesValidResponseForAuthZoneAddress(c *C) {
-// 	const authZoneAddr = "twtiger.com"
+func (s *FunctionalSuite) Test_ReceivesValidResponseForAuthZoneAddress(c *C) {
+	const authZoneAddr = "twtiger.com"
 
-// 	ns = localServer(true)
-// 	ns.Connect()
-// 	go ns.Serve()
+	ns = localServer(true)
+	ns.Connect()
+	go ns.Serve()
 
-// 	serv := []string{"127.0.0.1"}
-// 	r := dnsr.New(serv)
-// 	r.Servers[0] = "127.0.0.1:8899"
+	serv := []string{"127.0.0.1"}
+	r := dnsr.New(serv)
+	r.Servers[0] = "127.0.0.1:8899"
 
-// 	ips, err := r.LookupHost(authZoneAddr)
+	ips, err := r.LookupHost(authZoneAddr)
 
-// 	c.Assert(err, IsNil)
-// 	c.Assert(ips, HasLen, 2)
-// 	c.Assert(ips[0], Equals, net.ParseIP("123.123.7.8"))
-// 	c.Assert(ips[1], Equals, net.ParseIP("78.78.90.1"))
-// }
+	c.Assert(err, IsNil)
+	c.Assert(ips, HasLen, 2)
+	c.Assert(ips[0], DeepEquals, net.ParseIP("123.123.7.8"))
+	c.Assert(ips[1], DeepEquals, net.ParseIP("78.78.90.1"))
+}
 
 func (s *FunctionalSuite) Test_CreationOfSerializedResponseFromQuery(c *C) {
 	header := createBytesForHeaders()

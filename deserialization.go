@@ -23,7 +23,6 @@ func (m *message) deserialize(b []byte) error {
 func (h *header) deserialize(b []byte) {
 	h.id = binary.BigEndian.Uint16(b[:2])
 	h.qdCount = binary.BigEndian.Uint16(b[4:6])
-	h.anCount = binary.BigEndian.Uint16(b[6:8])
 }
 
 func (q *query) deserialize(b []byte) error {
