@@ -174,3 +174,19 @@ func (s *SerializationSuite) Test_flattenDifferentTypes(c *C) {
 
 	c.Assert(bytes, DeepEquals, exp)
 }
+
+func (s *SerializationSuite) Test_flattenUint16(c *C) {
+	exp := []byte{1, 1}
+
+	bytes := flattenBytes(uint16(257))
+
+	c.Assert(bytes, DeepEquals, exp)
+}
+
+func (s *SerializationSuite) Test_flattenUint32(c *C) {
+	exp := []byte{1, 0, 0, 1}
+
+	bytes := flattenBytes(uint32(16777217))
+
+	c.Assert(bytes, DeepEquals, exp)
+}

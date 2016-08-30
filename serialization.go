@@ -18,7 +18,9 @@ func flattenBytes(i ...interface{}) (b []byte) {
 		case []byte:
 			b = append(b, k...)
 		case uint16:
-			b = append(b, []byte{0, byte(k)}...)
+			b = append(b, serializeUint16(k)...)
+		case uint32:
+			b = append(b, serializeUint32(k)...)
 		default:
 			panic(fmt.Sprintf("cannot flatten: %#v", e))
 		}
@@ -41,13 +43,13 @@ func (q *query) serialize() ([]byte, error) {
 		return nil, err
 	}
 
-	return flattenBytes(l, serializeUint16(uint16(q.qtype)), serializeUint16(uint16(q.qclass))), nil
+	return flattenBytes(l, uint16(q.qtype), uint16(q.qclass)), nil
 }
 
 func (r *record) serialize() (b []byte) {
 	l, _ := serializeLabels(r.name)
 
-	b = flattenBytes(l, serializeUint16(uint16(r._type)), serializeUint16(uint16(r.class)), serializeUint32(uint32(r.ttl)), serializeUint16(r.rdLength), r.rData)
+	b = flattenBytes(l, uint16(r._type), uint16(r.class), uint32(r.ttl), r.rdLength, r.rData)
 	return
 }
 
