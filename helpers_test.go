@@ -14,7 +14,7 @@ var ns Nameserver
 var oneInTwoBytes = []byte{0, 1}
 
 func createBytesForHeaders() []byte {
-	return []byte{4, 210, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
+	return []byte{4, 210, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0}
 }
 
 func createBytesForLabels(l []label) (b []byte) {

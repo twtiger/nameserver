@@ -119,7 +119,8 @@ func (s *SerializationSuite) Test_serialize_returnsByteArrayForMessageWithQuery(
 
 	m := &message{
 		header: &header{
-			id: idNum,
+			id:      idNum,
+			qdCount: noOfQueries,
 		},
 		query: &query{
 			qname:  twTigerInLabels,
@@ -133,12 +134,15 @@ func (s *SerializationSuite) Test_serialize_returnsByteArrayForMessageWithQuery(
 	c.Assert(b, DeepEquals, exp)
 }
 
+const noOfQueries uint16 = 1
+
 func (s *SerializationSuite) Test_serialize_returnsByteArrayForMessageWithResponse(c *C) {
 	exp := flattenBytes(createBytesForHeaders(), twTigerInBytes, oneInTwoBytes, oneInTwoBytes, createBytesForAnswer([]byte{123, 123, 7, 8}))
 
 	m := &message{
 		header: &header{
-			id: idNum,
+			id:      idNum,
+			qdCount: noOfQueries,
 		},
 		query: &query{
 			qname:  twTigerInLabels,
