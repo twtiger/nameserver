@@ -13,12 +13,12 @@ type query struct {
 }
 
 type record struct {
-	Name     []label
-	Type     qType
-	Class    qClass
-	TTL      uint32
-	RDLength uint16
-	RData    []byte
+	name     []label
+	_type    qType
+	class    qClass
+	ttl      uint32
+	rdLength uint16
+	rData    []byte
 }
 
 type message struct {

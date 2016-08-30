@@ -45,9 +45,9 @@ func (q *query) serialize() ([]byte, error) {
 }
 
 func (r *record) serialize() (b []byte) {
-	l, _ := serializeLabels(r.Name)
+	l, _ := serializeLabels(r.name)
 
-	b = flattenBytes(l, serializeUint16(uint16(r.Type)), serializeUint16(uint16(r.Class)), serializeUint32(uint32(r.TTL)), serializeUint16(r.RDLength), r.RData)
+	b = flattenBytes(l, serializeUint16(uint16(r._type)), serializeUint16(uint16(r.class)), serializeUint32(uint32(r.ttl)), serializeUint16(r.rdLength), r.rData)
 	return
 }
 
