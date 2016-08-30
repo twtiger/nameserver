@@ -1,7 +1,6 @@
 package nameserver
 
 import (
-	"net"
 	"testing"
 
 	dnsr "github.com/bogdanovich/dns_resolver"
@@ -37,8 +36,9 @@ func (s *FunctionalSuite) Test_ReceivesValidResponseForAuthZoneAddress(c *C) {
 
 	c.Assert(err, IsNil)
 	c.Assert(ips, HasLen, 2)
-	c.Assert(ips[0], DeepEquals, net.ParseIP("123.123.7.8"))
-	c.Assert(ips[1], DeepEquals, net.ParseIP("78.78.90.1"))
+
+	c.Assert(ips[0].String(), Equals, "123.123.7.8")
+	c.Assert(ips[1].String(), Equals, "78.78.90.1")
 }
 
 func (s *FunctionalSuite) Test_CreationOfSerializedResponseFromQuery(c *C) {
