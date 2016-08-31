@@ -68,7 +68,6 @@ func serializeLabels(l []label) ([]byte, error) {
 	for _, e := range l {
 		b = append(b, e.serialize()...)
 	}
-	b = append(b, 0)
 	return b, nil
 }
 

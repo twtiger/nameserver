@@ -10,7 +10,9 @@ func init() {
 func retrieve(labels []label) (rrs []*record) {
 	recordName := ""
 	for _, l := range labels {
-		recordName += string(l) + "."
+		if string(l) != "" {
+			recordName += string(l) + "."
+		}
 	}
 
 	if rrs, ok := database[recordName]; ok {

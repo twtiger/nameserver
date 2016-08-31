@@ -27,6 +27,7 @@ func (s *DeserializationSuite) Test_extractLabels_canParseSingleLabel(c *C) {
 	c.Assert(err, IsNil)
 
 	c.Assert(labels[0], Equals, label("www"))
+	c.Assert(labels[1], Equals, label(""))
 	c.Assert(len(remaining), Equals, 4)
 }
 
@@ -40,16 +41,17 @@ func (s *DeserializationSuite) Test_extractLabels_returnsRemainingBytes(c *C) {
 }
 
 func (s *DeserializationSuite) Test_extractLabels_canParseMoreThanOneLabel(c *C) {
-	b := createBytesForLabels(createLabelsFor("www.thoughtworks.com"))
+	b := createBytesForLabels(createLabelsFor("www.thoughtworks.com."))
 
 	labels, _, err := extractLabels(b)
 
 	c.Assert(err, IsNil)
 
-	c.Assert(len(labels), Equals, 3)
+	c.Assert(len(labels), Equals, 4)
 	c.Assert(labels[0], Equals, label("www"))
 	c.Assert(labels[1], Equals, label("thoughtworks"))
 	c.Assert(labels[2], Equals, label("com"))
+	c.Assert(labels[3], Equals, label(""))
 }
 
 func (s *DeserializationSuite) Test_extractLabels_forEmptyQuestionReturnsError(c *C) {
@@ -84,14 +86,14 @@ func (s *DeserializationSuite) Test_deserialize_onQuery_returnsQuery(c *C) {
 	c.Assert(q.qclass, Equals, qclassIN)
 }
 
-func (s *DeserializationSuite) Test_deserialize_returnsOneLabelForSingleQueryAndStopsParsingAfterNullLabel(c *C) {
+func (s *DeserializationSuite) Test_deserialize_returnsTwoLabelsForSingleQueryAndStopsParsingAfterNullLabel(c *C) {
 	b := flattenBytes(createBytesForHeaders(), 3, "www", 0, oneInTwoBytes, oneInTwoBytes, 1, 2, 3)
 
 	msg := &message{}
 	err := msg.deserialize(b)
 
 	c.Assert(err, IsNil)
-	c.Assert(len(msg.query.qname), Equals, 1)
+	c.Assert(len(msg.query.qname), Equals, 2)
 }
 
 func (s *DeserializationSuite) Test_deserialize_returnsErrorIfHeadersAreInvalid(c *C) {

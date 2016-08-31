@@ -48,6 +48,8 @@ func extractLabels(b []byte) (l []label, remaining []byte, err error) {
 		b = b[length+1:]
 	}
 
+	l = append(l, label(""))
+
 	return l, b[1:], nil // don't return the remaining null byte
 }
 
