@@ -111,11 +111,12 @@ func (s *DeserializationSuite) Test_deserialize_returnsErrorQueryIsInvalid(c *C)
 }
 
 func (s *DeserializationSuite) Test_deserialize_headersCorrectly(c *C) {
-	b := flattenBytes(4, 210, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0)
+	largeNumOfQueries := uint16(258)
+	b := flattenBytes(idNum, 3, 4, largeNumOfQueries, 5, 6, 7, 8, 9, 10)
 
 	h := &header{}
 	h.deserialize(b)
 
-	c.Assert(h.id, Equals, uint16(1234))
-	c.Assert(h.qdCount, Equals, uint16(3))
+	c.Assert(h.id, Equals, idNum)
+	c.Assert(h.qdCount, Equals, largeNumOfQueries)
 }

@@ -42,7 +42,11 @@ func (s *FunctionalSuite) Test_ReceivesValidResponseForAuthZoneAddress(c *C) {
 }
 
 func (s *FunctionalSuite) Test_CreationOfSerializedResponseFromQuery(c *C) {
-	header := createBytesForHeaders()
+	id := []byte{4, 210}
+	qdCount := oneInTwoBytes
+	anCount := []byte{0, 2}
+	header := flattenBytes(id, 0, 0, qdCount, 0, 0, 0, 0, 0, 0)
+
 	recordName := twTigerInBytes
 	qtype := oneInTwoBytes
 	qclass := oneInTwoBytes
@@ -57,7 +61,11 @@ func (s *FunctionalSuite) Test_CreationOfSerializedResponseFromQuery(c *C) {
 	recordRData := []byte{123, 123, 7, 8}
 	secondIP := []byte{78, 78, 90, 1}
 
-	c.Assert(response[0:12], DeepEquals, header)
+	c.Assert(response[0:2], DeepEquals, id)
+	c.Assert(response[2:4], DeepEquals, make([]byte, 2))
+	c.Assert(response[4:6], DeepEquals, qdCount)
+	c.Assert(response[6:8], DeepEquals, anCount)
+	c.Assert(response[8:12], DeepEquals, make([]byte, 4))
 	c.Assert(response[12:25], DeepEquals, recordName)
 	c.Assert(response[25:27], DeepEquals, qtype)
 	c.Assert(response[27:29], DeepEquals, qclass)
